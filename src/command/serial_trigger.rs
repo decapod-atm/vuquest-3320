@@ -6,7 +6,7 @@ const SERIAL_TRIGGER: &str = "TRGSTO";
 /// Maximum timeout (in milliseconds) for [SerialTriggerMode].
 pub const MAX_SERIAL_TRIGGER: u32 = 300_000;
 
-/// Represents the `Mobile Phone Read Mode` serial command.
+/// Represents the `Serial Trigger Mode` serial command.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct SerialTriggerMode {
     ms: u32,

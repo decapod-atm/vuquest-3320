@@ -1,6 +1,6 @@
 [package]
 name = "vuquest-3320"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 authors = ["Vuquest 3320 developers", "Decapod ATM developers"]
 description = "Serial communication protocol for Honeywell BCS devices"

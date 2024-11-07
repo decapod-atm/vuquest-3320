@@ -4,7 +4,7 @@ const DEFAULT_SETTINGS: &str = "PDFDFT";
 const PDF_OFF: &str = "PDFENA0";
 const PDF_ON: &str = "PDFENA1";
 
-/// Represents the `Mobile Phone Read Mode` serial command.
+/// Represents the `PDF417` serial command.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum PDF417 {
     DefaultSettings,

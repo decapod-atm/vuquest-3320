@@ -4,7 +4,7 @@ const DEFAULT_SETTINGS: &str = "QRCDFT";
 const QR_OFF: &str = "QRCENA0";
 const QR_ON: &str = "QRCENA1";
 
-/// Represents the `Mobile Phone Read Mode` serial command.
+/// Represents the `QR Code` serial command.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum QRCode {
     DefaultSettings,
