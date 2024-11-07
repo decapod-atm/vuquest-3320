@@ -4,6 +4,7 @@ use core::fmt;
 
 use alloc::string::String;
 
+pub mod image_ship;
 pub mod image_snap;
 mod manual_trigger;
 mod mobile_phone;
@@ -15,7 +16,8 @@ mod software_rev;
 mod symbologies;
 mod trigger;
 
-pub use image_snap::*;
+pub use image_ship::ImageShip;
+pub use image_snap::ImageSnap;
 pub use manual_trigger::*;
 pub use mobile_phone::*;
 pub use pdf::*;
@@ -31,6 +33,7 @@ pub use trigger::*;
 pub enum SerialCommand {
     AllSymbologies(AllSymbologies),
     ImageSnap(ImageSnap),
+    ImageShip(ImageShip),
     ManualTriggerMode(ManualTriggerMode),
     MobilePhoneReadMode(MobilePhoneReadMode),
     PDF417(PDF417),
@@ -50,6 +53,7 @@ impl SerialCommand {
         match self {
             Self::AllSymbologies(cmd) => cmd.command().into(),
             Self::ImageSnap(cmd) => cmd.command(),
+            Self::ImageShip(cmd) => cmd.command(),
             Self::ManualTriggerMode(cmd) => cmd.command().into(),
             Self::MobilePhoneReadMode(cmd) => cmd.command().into(),
             Self::PDF417(cmd) => cmd.command().into(),
