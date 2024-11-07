@@ -5,7 +5,7 @@ const TRIGGER_ACTIVATE: &str = "\x16T\x0d";
 // <SYN>U<CR>
 const TRIGGER_DEACTIVATE: &str = "\x16U\x0d";
 
-/// Represents the `Mobile Phone Read Mode` serial command.
+/// Represents the `Trigger Activation` serial command.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum Trigger {
     Activate,

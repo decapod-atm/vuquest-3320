@@ -1,6 +1,8 @@
+//! Result and error types for the library.
+
 use core::fmt;
 
-/// Convenience alias for the library [Result](std::result::Result) type.
+/// Convenience alias for the library [Result](core::result::Result) type.
 pub type Result<T> = core::result::Result<T, Error>;
 
 /// Represents error conditions for the library.

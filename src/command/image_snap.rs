@@ -1,3 +1,5 @@
+//! Types and algorithms related to `Image Snap` configuration.
+
 use alloc::string::{String, ToString};
 
 use crate::result::{Error, Result};
@@ -63,6 +65,17 @@ macro_rules! image_snap_field {
         }
     };
 }
+
+image_snap_field!(imaging_style: ImagingStyle);
+image_snap_field!(beeper: Beeper);
+image_snap_field!(wait_for_trigger: WaitForTrigger);
+image_snap_field!(led: LED);
+image_snap_field!(exposure: Exposure);
+image_snap_field!(gain: Gain);
+image_snap_field!(target_white_value: TargetWhiteValue);
+image_snap_field!(delta_for_acceptance: DeltaForAcceptance);
+image_snap_field!(update_tries: UpdateTries);
+image_snap_field!(target_set_point: TargetSetPoint);
 
 impl ImageSnap {
     /// Creates a new [ImageSnap].
@@ -296,17 +309,6 @@ impl ImageSnap {
         format!("{IMAGE_SNAP}{imaging}{beeper}{wait_for_trigger}{led}{exposure}{gain}{twv}{delta}{update}{tsp}")
     }
 }
-
-image_snap_field!(imaging_style: ImagingStyle);
-image_snap_field!(beeper: Beeper);
-image_snap_field!(wait_for_trigger: WaitForTrigger);
-image_snap_field!(led: LED);
-image_snap_field!(exposure: Exposure);
-image_snap_field!(gain: Gain);
-image_snap_field!(target_white_value: TargetWhiteValue);
-image_snap_field!(delta_for_acceptance: DeltaForAcceptance);
-image_snap_field!(update_tries: UpdateTries);
-image_snap_field!(target_set_point: TargetSetPoint);
 
 impl Default for ImageSnap {
     fn default() -> Self {

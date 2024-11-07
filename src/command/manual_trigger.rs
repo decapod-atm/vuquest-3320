@@ -3,7 +3,7 @@ use crate::result::{Error, Result};
 const NORMAL: &str = "PAPHHF";
 const ENHANCED: &str = "PAPHHS";
 
-/// Represents the `Mobile Phone Read Mode` serial command.
+/// Represents the `Manual Trigger Mode` serial command.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum ManualTriggerMode {
     Normal,
