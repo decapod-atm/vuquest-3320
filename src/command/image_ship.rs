@@ -4,9 +4,11 @@ use crate::result::{Error, Result};
 
 mod compensation;
 mod infinity_filter;
+mod pixel_depth;
 
 pub use compensation::*;
 pub use infinity_filter::*;
+pub use pixel_depth::*;
 
 const IMAGE_SHIP: &str = "IMGSHP";
 
@@ -15,6 +17,7 @@ const IMAGE_SHIP: &str = "IMGSHP";
 pub struct ImageShip {
     infinity_filter: Option<InfinityFilter>,
     compensation: Option<Compensation>,
+    pixel_depth: Option<PixelDepth>,
 }
 
 macro_rules! image_ship_field {
@@ -42,6 +45,7 @@ macro_rules! image_ship_field {
 
 image_ship_field!(infinity_filter: InfinityFilter);
 image_ship_field!(compensation: Compensation);
+image_ship_field!(pixel_depth: PixelDepth);
 
 impl ImageShip {
     /// Creates a new [ImageShip].
@@ -49,6 +53,7 @@ impl ImageShip {
         Self {
             infinity_filter: None,
             compensation: None,
+            pixel_depth: None,
         }
     }
 
@@ -57,6 +62,7 @@ impl ImageShip {
         Self {
             infinity_filter: Some(val),
             compensation: self.compensation,
+            pixel_depth: self.pixel_depth,
         }
     }
 
@@ -65,6 +71,16 @@ impl ImageShip {
         Self {
             infinity_filter: self.infinity_filter,
             compensation: Some(val),
+            pixel_depth: self.pixel_depth,
+        }
+    }
+
+    /// Builder function that sets the [PixelDepth].
+    pub const fn with_pixel_depth(self, val: PixelDepth) -> Self {
+        Self {
+            infinity_filter: self.infinity_filter,
+            compensation: self.compensation,
+            pixel_depth: Some(val),
         }
     }
 
@@ -80,7 +96,12 @@ impl ImageShip {
             .map(|v| v.command().to_string())
             .unwrap_or_default();
 
-        format!("{IMAGE_SHIP}{infinity}{comp}")
+        let depth = self
+            .pixel_depth
+            .map(|v| v.command().to_string())
+            .unwrap_or_default();
+
+        format!("{IMAGE_SHIP}{infinity}{comp}{depth}")
     }
 }
 
@@ -97,10 +118,12 @@ impl TryFrom<&str> for ImageShip {
         let rem = val.strip_prefix(IMAGE_SHIP).ok_or(Error::InvalidVariant)?;
         let infinity_filter = InfinityFilter::try_from(rem).ok();
         let compensation = Compensation::try_from(rem).ok();
+        let pixel_depth = PixelDepth::try_from(rem).ok();
 
         Ok(Self {
             infinity_filter,
             compensation,
+            pixel_depth,
         })
     }
 }
@@ -127,14 +150,16 @@ mod tests {
     fn test_valid() {
         let exp_infinity_filter = InfinityFilter::new();
         let exp_compensation = Compensation::new();
+        let exp_pixel_depth = PixelDepth::new();
 
-        ["", "0A", "0C"]
+        ["", "0A", "0C", "8D"]
             .into_iter()
             .map(|s| format!("{IMAGE_SHIP}{s}"))
             .zip([
                 ImageShip::new(),
                 ImageShip::new().with_infinity_filter(exp_infinity_filter),
                 ImageShip::new().with_compensation(exp_compensation),
+                ImageShip::new().with_pixel_depth(exp_pixel_depth),
             ])
             .for_each(|(img_str, exp_img_ship)| {
                 assert_eq!(ImageShip::try_from(img_str.as_str()), Ok(exp_img_ship));
