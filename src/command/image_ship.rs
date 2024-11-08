@@ -7,6 +7,7 @@ mod edge_sharpen;
 mod histogram_stretch;
 mod infinity_filter;
 mod invert_image;
+mod noise_reduction;
 mod pixel_depth;
 
 pub use compensation::*;
@@ -14,6 +15,7 @@ pub use edge_sharpen::*;
 pub use histogram_stretch::*;
 pub use infinity_filter::*;
 pub use invert_image::*;
+pub use noise_reduction::*;
 pub use pixel_depth::*;
 
 const IMAGE_SHIP: &str = "IMGSHP";
@@ -27,6 +29,7 @@ pub struct ImageShip {
     edge_sharpen: Option<EdgeSharpen>,
     histogram_stretch: Option<HistogramStretch>,
     invert_image: Option<InvertImage>,
+    noise_reduction: Option<NoiseReduction>,
 }
 
 macro_rules! image_ship_field {
@@ -58,6 +61,7 @@ image_ship_field!(pixel_depth: PixelDepth);
 image_ship_field!(edge_sharpen: EdgeSharpen);
 image_ship_field!(histogram_stretch: HistogramStretch);
 image_ship_field!(invert_image: InvertImage);
+image_ship_field!(noise_reduction: NoiseReduction);
 
 impl ImageShip {
     /// Creates a new [ImageShip].
@@ -69,6 +73,7 @@ impl ImageShip {
             edge_sharpen: None,
             histogram_stretch: None,
             invert_image: None,
+            noise_reduction: None,
         }
     }
 
@@ -81,6 +86,7 @@ impl ImageShip {
             edge_sharpen: self.edge_sharpen,
             histogram_stretch: self.histogram_stretch,
             invert_image: self.invert_image,
+            noise_reduction: self.noise_reduction,
         }
     }
 
@@ -93,6 +99,7 @@ impl ImageShip {
             edge_sharpen: self.edge_sharpen,
             histogram_stretch: self.histogram_stretch,
             invert_image: self.invert_image,
+            noise_reduction: self.noise_reduction,
         }
     }
 
@@ -105,6 +112,7 @@ impl ImageShip {
             edge_sharpen: self.edge_sharpen,
             histogram_stretch: self.histogram_stretch,
             invert_image: self.invert_image,
+            noise_reduction: self.noise_reduction,
         }
     }
 
@@ -117,6 +125,7 @@ impl ImageShip {
             edge_sharpen: Some(val),
             histogram_stretch: self.histogram_stretch,
             invert_image: self.invert_image,
+            noise_reduction: self.noise_reduction,
         }
     }
 
@@ -129,6 +138,7 @@ impl ImageShip {
             edge_sharpen: self.edge_sharpen,
             histogram_stretch: Some(val),
             invert_image: self.invert_image,
+            noise_reduction: self.noise_reduction,
         }
     }
 
@@ -141,6 +151,20 @@ impl ImageShip {
             edge_sharpen: self.edge_sharpen,
             histogram_stretch: self.histogram_stretch,
             invert_image: Some(val),
+            noise_reduction: self.noise_reduction,
+        }
+    }
+
+    /// Builder function that sets the [NoiseReduction].
+    pub const fn with_noise_reduction(self, val: NoiseReduction) -> Self {
+        Self {
+            infinity_filter: self.infinity_filter,
+            compensation: self.compensation,
+            pixel_depth: self.pixel_depth,
+            edge_sharpen: self.edge_sharpen,
+            histogram_stretch: self.histogram_stretch,
+            invert_image: self.invert_image,
+            noise_reduction: Some(val),
         }
     }
 
@@ -176,7 +200,12 @@ impl ImageShip {
             .map(|v| v.command().to_string())
             .unwrap_or_default();
 
-        format!("{IMAGE_SHIP}{infinity}{comp}{depth}{edge}{histo}{invert}")
+        let noise = self
+            .noise_reduction
+            .map(|v| v.command().to_string())
+            .unwrap_or_default();
+
+        format!("{IMAGE_SHIP}{infinity}{comp}{depth}{edge}{histo}{invert}{noise}")
     }
 }
 
@@ -197,6 +226,7 @@ impl TryFrom<&str> for ImageShip {
         let edge_sharpen = EdgeSharpen::try_from(rem).ok();
         let histogram_stretch = HistogramStretch::try_from(rem).ok();
         let invert_image = InvertImage::try_from(rem).ok();
+        let noise_reduction = NoiseReduction::try_from(rem).ok();
 
         Ok(Self {
             infinity_filter,
@@ -205,6 +235,7 @@ impl TryFrom<&str> for ImageShip {
             edge_sharpen,
             histogram_stretch,
             invert_image,
+            noise_reduction,
         })
     }
 }
@@ -234,8 +265,9 @@ mod tests {
         let exp_pixel_depth = PixelDepth::new();
         let exp_histogram_stretch = HistogramStretch::new();
         let exp_invert_image = InvertImage::new();
+        let exp_noise_reduction = NoiseReduction::new();
 
-        ["", "0A", "0C", "8D", "0H", "1ix"]
+        ["", "0A", "0C", "8D", "0H", "1ix", "0if"]
             .into_iter()
             .map(|s| format!("{IMAGE_SHIP}{s}"))
             .zip([
@@ -245,6 +277,7 @@ mod tests {
                 ImageShip::new().with_pixel_depth(exp_pixel_depth),
                 ImageShip::new().with_histogram_stretch(exp_histogram_stretch),
                 ImageShip::new().with_invert_image(exp_invert_image),
+                ImageShip::new().with_noise_reduction(exp_noise_reduction),
             ])
             .for_each(|(img_str, exp_img_ship)| {
                 assert_eq!(ImageShip::try_from(img_str.as_str()), Ok(exp_img_ship));
@@ -258,5 +291,6 @@ mod tests {
         test_image_ship_field!(img, pixel_depth, exp_pixel_depth);
         test_image_ship_field!(img, histogram_stretch, exp_histogram_stretch);
         test_image_ship_field!(img, invert_image, exp_invert_image);
+        test_image_ship_field!(img, noise_reduction, exp_noise_reduction);
     }
 }
