@@ -8,6 +8,7 @@ mod histogram_stretch;
 mod image_rotate;
 mod infinity_filter;
 mod invert_image;
+mod jpeg_image_quality;
 mod noise_reduction;
 mod pixel_depth;
 
@@ -17,6 +18,7 @@ pub use histogram_stretch::*;
 pub use image_rotate::*;
 pub use infinity_filter::*;
 pub use invert_image::*;
+pub use jpeg_image_quality::*;
 pub use noise_reduction::*;
 pub use pixel_depth::*;
 
@@ -33,6 +35,7 @@ pub struct ImageShip {
     invert_image: Option<InvertImage>,
     noise_reduction: Option<NoiseReduction>,
     image_rotate: Option<ImageRotate>,
+    jpeg_image_quality: Option<JpegImageQuality>,
 }
 
 macro_rules! image_ship_field {
@@ -66,6 +69,7 @@ image_ship_field!(histogram_stretch: HistogramStretch);
 image_ship_field!(invert_image: InvertImage);
 image_ship_field!(noise_reduction: NoiseReduction);
 image_ship_field!(image_rotate: ImageRotate);
+image_ship_field!(jpeg_image_quality: JpegImageQuality);
 
 impl ImageShip {
     /// Creates a new [ImageShip].
@@ -79,6 +83,7 @@ impl ImageShip {
             invert_image: None,
             noise_reduction: None,
             image_rotate: None,
+            jpeg_image_quality: None,
         }
     }
 
@@ -93,6 +98,7 @@ impl ImageShip {
             invert_image: self.invert_image,
             noise_reduction: self.noise_reduction,
             image_rotate: self.image_rotate,
+            jpeg_image_quality: self.jpeg_image_quality,
         }
     }
 
@@ -107,6 +113,7 @@ impl ImageShip {
             invert_image: self.invert_image,
             noise_reduction: self.noise_reduction,
             image_rotate: self.image_rotate,
+            jpeg_image_quality: self.jpeg_image_quality,
         }
     }
 
@@ -121,6 +128,7 @@ impl ImageShip {
             invert_image: self.invert_image,
             noise_reduction: self.noise_reduction,
             image_rotate: self.image_rotate,
+            jpeg_image_quality: self.jpeg_image_quality,
         }
     }
 
@@ -135,6 +143,7 @@ impl ImageShip {
             invert_image: self.invert_image,
             noise_reduction: self.noise_reduction,
             image_rotate: self.image_rotate,
+            jpeg_image_quality: self.jpeg_image_quality,
         }
     }
 
@@ -149,6 +158,7 @@ impl ImageShip {
             invert_image: self.invert_image,
             noise_reduction: self.noise_reduction,
             image_rotate: self.image_rotate,
+            jpeg_image_quality: self.jpeg_image_quality,
         }
     }
 
@@ -163,6 +173,7 @@ impl ImageShip {
             invert_image: Some(val),
             noise_reduction: self.noise_reduction,
             image_rotate: self.image_rotate,
+            jpeg_image_quality: self.jpeg_image_quality,
         }
     }
 
@@ -177,6 +188,7 @@ impl ImageShip {
             invert_image: self.invert_image,
             noise_reduction: Some(val),
             image_rotate: self.image_rotate,
+            jpeg_image_quality: self.jpeg_image_quality,
         }
     }
 
@@ -191,6 +203,22 @@ impl ImageShip {
             invert_image: self.invert_image,
             noise_reduction: self.noise_reduction,
             image_rotate: Some(val),
+            jpeg_image_quality: self.jpeg_image_quality,
+        }
+    }
+
+    /// Builder function that sets the [JpegImageQuality].
+    pub const fn with_jpeg_image_quality(self, val: JpegImageQuality) -> Self {
+        Self {
+            infinity_filter: self.infinity_filter,
+            compensation: self.compensation,
+            pixel_depth: self.pixel_depth,
+            edge_sharpen: self.edge_sharpen,
+            histogram_stretch: self.histogram_stretch,
+            invert_image: self.invert_image,
+            noise_reduction: self.noise_reduction,
+            image_rotate: self.image_rotate,
+            jpeg_image_quality: Some(val),
         }
     }
 
@@ -236,7 +264,12 @@ impl ImageShip {
             .map(|v| v.command().to_string())
             .unwrap_or_default();
 
-        format!("{IMAGE_SHIP}{infinity}{comp}{depth}{edge}{histo}{invert}{noise}{rotate}")
+        let jpeg = self
+            .jpeg_image_quality
+            .map(|v| v.command().to_string())
+            .unwrap_or_default();
+
+        format!("{IMAGE_SHIP}{infinity}{comp}{depth}{edge}{histo}{invert}{noise}{rotate}{jpeg}")
     }
 }
 
@@ -259,6 +292,7 @@ impl TryFrom<&str> for ImageShip {
         let invert_image = InvertImage::try_from(rem).ok();
         let noise_reduction = NoiseReduction::try_from(rem).ok();
         let image_rotate = ImageRotate::try_from(rem).ok();
+        let jpeg_image_quality = JpegImageQuality::try_from(rem).ok();
 
         Ok(Self {
             infinity_filter,
@@ -269,6 +303,7 @@ impl TryFrom<&str> for ImageShip {
             invert_image,
             noise_reduction,
             image_rotate,
+            jpeg_image_quality,
         })
     }
 }
@@ -300,6 +335,7 @@ mod tests {
         let exp_invert_image = InvertImage::new();
         let exp_noise_reduction = NoiseReduction::new();
         let exp_image_rotate = ImageRotate::new();
+        let exp_jpeg_image_quality = JpegImageQuality::new();
 
         ["", "0A", "0C", "8D", "0H", "1ix", "0if", "0ir"]
             .into_iter()
@@ -313,6 +349,7 @@ mod tests {
                 ImageShip::new().with_invert_image(exp_invert_image),
                 ImageShip::new().with_noise_reduction(exp_noise_reduction),
                 ImageShip::new().with_image_rotate(exp_image_rotate),
+                ImageShip::new().with_jpeg_image_quality(exp_jpeg_image_quality),
             ])
             .for_each(|(img_str, exp_img_ship)| {
                 assert_eq!(ImageShip::try_from(img_str.as_str()), Ok(exp_img_ship));
@@ -328,5 +365,6 @@ mod tests {
         test_image_ship_field!(img, invert_image, exp_invert_image);
         test_image_ship_field!(img, noise_reduction, exp_noise_reduction);
         test_image_ship_field!(img, image_rotate, exp_image_rotate);
+        test_image_ship_field!(img, jpeg_image_quality, exp_jpeg_image_quality);
     }
 }
