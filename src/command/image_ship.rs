@@ -4,11 +4,13 @@ use crate::result::{Error, Result};
 
 mod compensation;
 mod edge_sharpen;
+mod histogram_stretch;
 mod infinity_filter;
 mod pixel_depth;
 
 pub use compensation::*;
 pub use edge_sharpen::*;
+pub use histogram_stretch::*;
 pub use infinity_filter::*;
 pub use pixel_depth::*;
 
@@ -21,6 +23,7 @@ pub struct ImageShip {
     compensation: Option<Compensation>,
     pixel_depth: Option<PixelDepth>,
     edge_sharpen: Option<EdgeSharpen>,
+    histogram_stretch: Option<HistogramStretch>,
 }
 
 macro_rules! image_ship_field {
@@ -50,6 +53,7 @@ image_ship_field!(infinity_filter: InfinityFilter);
 image_ship_field!(compensation: Compensation);
 image_ship_field!(pixel_depth: PixelDepth);
 image_ship_field!(edge_sharpen: EdgeSharpen);
+image_ship_field!(histogram_stretch: HistogramStretch);
 
 impl ImageShip {
     /// Creates a new [ImageShip].
@@ -59,6 +63,7 @@ impl ImageShip {
             compensation: None,
             pixel_depth: None,
             edge_sharpen: None,
+            histogram_stretch: None,
         }
     }
 
@@ -69,6 +74,7 @@ impl ImageShip {
             compensation: self.compensation,
             pixel_depth: self.pixel_depth,
             edge_sharpen: self.edge_sharpen,
+            histogram_stretch: self.histogram_stretch,
         }
     }
 
@@ -79,6 +85,7 @@ impl ImageShip {
             compensation: Some(val),
             pixel_depth: self.pixel_depth,
             edge_sharpen: self.edge_sharpen,
+            histogram_stretch: self.histogram_stretch,
         }
     }
 
@@ -89,6 +96,7 @@ impl ImageShip {
             compensation: self.compensation,
             pixel_depth: Some(val),
             edge_sharpen: self.edge_sharpen,
+            histogram_stretch: self.histogram_stretch,
         }
     }
 
@@ -99,6 +107,18 @@ impl ImageShip {
             compensation: self.compensation,
             pixel_depth: self.pixel_depth,
             edge_sharpen: Some(val),
+            histogram_stretch: self.histogram_stretch,
+        }
+    }
+
+    /// Builder function that sets the [HistogramStretch].
+    pub const fn with_histogram_stretch(self, val: HistogramStretch) -> Self {
+        Self {
+            infinity_filter: self.infinity_filter,
+            compensation: self.compensation,
+            pixel_depth: self.pixel_depth,
+            edge_sharpen: self.edge_sharpen,
+            histogram_stretch: Some(val),
         }
     }
 
@@ -124,7 +144,12 @@ impl ImageShip {
             .map(|v| v.command().to_string())
             .unwrap_or_default();
 
-        format!("{IMAGE_SHIP}{infinity}{comp}{depth}{edge}")
+        let histo = self
+            .histogram_stretch
+            .map(|v| v.command().to_string())
+            .unwrap_or_default();
+
+        format!("{IMAGE_SHIP}{infinity}{comp}{depth}{edge}{histo}")
     }
 }
 
@@ -143,12 +168,14 @@ impl TryFrom<&str> for ImageShip {
         let compensation = Compensation::try_from(rem).ok();
         let pixel_depth = PixelDepth::try_from(rem).ok();
         let edge_sharpen = EdgeSharpen::try_from(rem).ok();
+        let histogram_stretch = HistogramStretch::try_from(rem).ok();
 
         Ok(Self {
             infinity_filter,
             compensation,
             pixel_depth,
             edge_sharpen,
+            histogram_stretch,
         })
     }
 }
@@ -176,8 +203,9 @@ mod tests {
         let exp_infinity_filter = InfinityFilter::new();
         let exp_compensation = Compensation::new();
         let exp_pixel_depth = PixelDepth::new();
+        let exp_histogram_stretch = HistogramStretch::new();
 
-        ["", "0A", "0C", "8D"]
+        ["", "0A", "0C", "8D", "0H"]
             .into_iter()
             .map(|s| format!("{IMAGE_SHIP}{s}"))
             .zip([
@@ -185,6 +213,7 @@ mod tests {
                 ImageShip::new().with_infinity_filter(exp_infinity_filter),
                 ImageShip::new().with_compensation(exp_compensation),
                 ImageShip::new().with_pixel_depth(exp_pixel_depth),
+                ImageShip::new().with_histogram_stretch(exp_histogram_stretch),
             ])
             .for_each(|(img_str, exp_img_ship)| {
                 assert_eq!(ImageShip::try_from(img_str.as_str()), Ok(exp_img_ship));
@@ -195,5 +224,7 @@ mod tests {
 
         test_image_ship_field!(img, infinity_filter, exp_infinity_filter);
         test_image_ship_field!(img, compensation, exp_compensation);
+        test_image_ship_field!(img, pixel_depth, exp_pixel_depth);
+        test_image_ship_field!(img, histogram_stretch, exp_histogram_stretch);
     }
 }
