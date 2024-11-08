@@ -3,10 +3,12 @@ use alloc::string::{String, ToString};
 use crate::result::{Error, Result};
 
 mod compensation;
+mod edge_sharpen;
 mod infinity_filter;
 mod pixel_depth;
 
 pub use compensation::*;
+pub use edge_sharpen::*;
 pub use infinity_filter::*;
 pub use pixel_depth::*;
 
@@ -18,6 +20,7 @@ pub struct ImageShip {
     infinity_filter: Option<InfinityFilter>,
     compensation: Option<Compensation>,
     pixel_depth: Option<PixelDepth>,
+    edge_sharpen: Option<EdgeSharpen>,
 }
 
 macro_rules! image_ship_field {
@@ -46,6 +49,7 @@ macro_rules! image_ship_field {
 image_ship_field!(infinity_filter: InfinityFilter);
 image_ship_field!(compensation: Compensation);
 image_ship_field!(pixel_depth: PixelDepth);
+image_ship_field!(edge_sharpen: EdgeSharpen);
 
 impl ImageShip {
     /// Creates a new [ImageShip].
@@ -54,6 +58,7 @@ impl ImageShip {
             infinity_filter: None,
             compensation: None,
             pixel_depth: None,
+            edge_sharpen: None,
         }
     }
 
@@ -63,6 +68,7 @@ impl ImageShip {
             infinity_filter: Some(val),
             compensation: self.compensation,
             pixel_depth: self.pixel_depth,
+            edge_sharpen: self.edge_sharpen,
         }
     }
 
@@ -72,6 +78,7 @@ impl ImageShip {
             infinity_filter: self.infinity_filter,
             compensation: Some(val),
             pixel_depth: self.pixel_depth,
+            edge_sharpen: self.edge_sharpen,
         }
     }
 
@@ -81,6 +88,17 @@ impl ImageShip {
             infinity_filter: self.infinity_filter,
             compensation: self.compensation,
             pixel_depth: Some(val),
+            edge_sharpen: self.edge_sharpen,
+        }
+    }
+
+    /// Builder function that sets the [EdgeSharpen].
+    pub const fn with_edge_sharpen(self, val: EdgeSharpen) -> Self {
+        Self {
+            infinity_filter: self.infinity_filter,
+            compensation: self.compensation,
+            pixel_depth: self.pixel_depth,
+            edge_sharpen: Some(val),
         }
     }
 
@@ -101,7 +119,12 @@ impl ImageShip {
             .map(|v| v.command().to_string())
             .unwrap_or_default();
 
-        format!("{IMAGE_SHIP}{infinity}{comp}{depth}")
+        let edge = self
+            .edge_sharpen
+            .map(|v| v.command().to_string())
+            .unwrap_or_default();
+
+        format!("{IMAGE_SHIP}{infinity}{comp}{depth}{edge}")
     }
 }
 
@@ -119,11 +142,13 @@ impl TryFrom<&str> for ImageShip {
         let infinity_filter = InfinityFilter::try_from(rem).ok();
         let compensation = Compensation::try_from(rem).ok();
         let pixel_depth = PixelDepth::try_from(rem).ok();
+        let edge_sharpen = EdgeSharpen::try_from(rem).ok();
 
         Ok(Self {
             infinity_filter,
             compensation,
             pixel_depth,
+            edge_sharpen,
         })
     }
 }
