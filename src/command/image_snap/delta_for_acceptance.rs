@@ -68,7 +68,7 @@ impl TryFrom<&str> for DeltaForAcceptance {
 
         val[exp_start..pos]
             .parse::<u8>()
-            .map(|u| Self::from_delta(u))
+            .map(Self::from_delta)
             .map_err(|_| Error::InvalidVariant)
     }
 }

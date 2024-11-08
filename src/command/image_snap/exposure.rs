@@ -104,7 +104,7 @@ impl TryFrom<&str> for Exposure {
         val[exp_start..pos]
             .parse::<u32>()
             .map_err(|_| Error::InvalidVariant)
-            .and_then(|u| Self::try_from_unit(u))
+            .and_then(Self::try_from_unit)
     }
 }
 

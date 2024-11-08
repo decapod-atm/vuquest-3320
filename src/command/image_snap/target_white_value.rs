@@ -58,7 +58,7 @@ impl TryFrom<&str> for TargetWhiteValue {
 
         val[exp_start..pos]
             .parse::<u8>()
-            .map(|u| Self::from_value(u))
+            .map(Self::from_value)
             .map_err(|_| Error::InvalidVariant)
     }
 }
