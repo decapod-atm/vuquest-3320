@@ -68,7 +68,7 @@ impl TryFrom<&str> for UpdateTries {
         val[exp_start..pos]
             .parse::<u8>()
             .map_err(|_| Error::InvalidVariant)
-            .and_then(|u| Self::try_from_tries(u))
+            .and_then(Self::try_from_tries)
     }
 }
 
