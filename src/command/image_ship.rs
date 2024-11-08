@@ -2,8 +2,10 @@ use alloc::string::{String, ToString};
 
 use crate::result::{Error, Result};
 
+mod compensation;
 mod infinity_filter;
 
+pub use compensation::*;
 pub use infinity_filter::*;
 
 const IMAGE_SHIP: &str = "IMGSHP";
@@ -12,6 +14,7 @@ const IMAGE_SHIP: &str = "IMGSHP";
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct ImageShip {
     infinity_filter: Option<InfinityFilter>,
+    compensation: Option<Compensation>,
 }
 
 macro_rules! image_ship_field {
@@ -37,11 +40,15 @@ macro_rules! image_ship_field {
     };
 }
 
+image_ship_field!(infinity_filter: InfinityFilter);
+image_ship_field!(compensation: Compensation);
+
 impl ImageShip {
     /// Creates a new [ImageShip].
     pub const fn new() -> Self {
         Self {
             infinity_filter: None,
+            compensation: None,
         }
     }
 
@@ -49,6 +56,15 @@ impl ImageShip {
     pub const fn with_infinity_filter(self, val: InfinityFilter) -> Self {
         Self {
             infinity_filter: Some(val),
+            compensation: self.compensation,
+        }
+    }
+
+    /// Builder function that sets the [Compensation].
+    pub const fn with_compensation(self, val: Compensation) -> Self {
+        Self {
+            infinity_filter: self.infinity_filter,
+            compensation: Some(val),
         }
     }
 
@@ -59,11 +75,14 @@ impl ImageShip {
             .map(|v| v.command().to_string())
             .unwrap_or_default();
 
-        format!("{IMAGE_SHIP}{infinity}")
+        let comp = self
+            .compensation
+            .map(|v| v.command().to_string())
+            .unwrap_or_default();
+
+        format!("{IMAGE_SHIP}{infinity}{comp}")
     }
 }
-
-image_ship_field!(infinity_filter: InfinityFilter);
 
 impl Default for ImageShip {
     fn default() -> Self {
@@ -77,8 +96,12 @@ impl TryFrom<&str> for ImageShip {
     fn try_from(val: &str) -> Result<Self> {
         let rem = val.strip_prefix(IMAGE_SHIP).ok_or(Error::InvalidVariant)?;
         let infinity_filter = InfinityFilter::try_from(rem).ok();
+        let compensation = Compensation::try_from(rem).ok();
 
-        Ok(Self { infinity_filter })
+        Ok(Self {
+            infinity_filter,
+            compensation,
+        })
     }
 }
 
@@ -103,13 +126,15 @@ mod tests {
     #[test]
     fn test_valid() {
         let exp_infinity_filter = InfinityFilter::new();
+        let exp_compensation = Compensation::new();
 
-        ["", "0A"]
+        ["", "0A", "0C"]
             .into_iter()
             .map(|s| format!("{IMAGE_SHIP}{s}"))
             .zip([
                 ImageShip::new(),
                 ImageShip::new().with_infinity_filter(exp_infinity_filter),
+                ImageShip::new().with_compensation(exp_compensation),
             ])
             .for_each(|(img_str, exp_img_ship)| {
                 assert_eq!(ImageShip::try_from(img_str.as_str()), Ok(exp_img_ship));
@@ -119,5 +144,6 @@ mod tests {
         let mut img = ImageShip::new();
 
         test_image_ship_field!(img, infinity_filter, exp_infinity_filter);
+        test_image_ship_field!(img, compensation, exp_compensation);
     }
 }
