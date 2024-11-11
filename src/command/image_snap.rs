@@ -3,6 +3,7 @@
 use alloc::string::{String, ToString};
 
 use crate::result::{Error, Result};
+use crate::modifier_field;
 
 mod beeper;
 mod delta_for_acceptance;
@@ -43,39 +44,165 @@ pub struct ImageSnap {
     target_set_point: Option<TargetSetPoint>,
 }
 
-macro_rules! image_snap_field {
-    ($field:ident: $field_ty:ty) => {
-        paste::paste! {
-            impl ImageSnap {
-                #[doc = "Gets the [" $field_ty "] for [ImageSnap]."]
-                pub const fn $field(&self) -> Option<$field_ty> {
-                    self.$field
-                }
-
-                #[doc = "Sets the [" $field_ty "] for [ImageSnap]."]
-                pub fn [<set_ $field>](&mut self, val: $field_ty) {
-                    self.$field = Some(val);
-                }
-
-                #[doc = "Unsets the [" $field_ty "] for [ImageSnap]."]
-                pub fn [<unset_ $field>](&mut self) {
-                    self.$field = None;
-                }
-            }
-        }
-    };
+modifier_field! {
+    ImageSnap,
+    imaging_style: ImagingStyle,
+    [
+        beeper,
+        wait_for_trigger,
+        led,
+        exposure,
+        gain,
+        target_white_value,
+        delta_for_acceptance,
+        update_tries,
+        target_set_point,
+    ],
 }
 
-image_snap_field!(imaging_style: ImagingStyle);
-image_snap_field!(beeper: Beeper);
-image_snap_field!(wait_for_trigger: WaitForTrigger);
-image_snap_field!(led: LED);
-image_snap_field!(exposure: Exposure);
-image_snap_field!(gain: Gain);
-image_snap_field!(target_white_value: TargetWhiteValue);
-image_snap_field!(delta_for_acceptance: DeltaForAcceptance);
-image_snap_field!(update_tries: UpdateTries);
-image_snap_field!(target_set_point: TargetSetPoint);
+modifier_field! {
+    ImageSnap,
+    beeper: Beeper,
+    [
+        imaging_style,
+        wait_for_trigger,
+        led,
+        exposure,
+        gain,
+        target_white_value,
+        delta_for_acceptance,
+        update_tries,
+        target_set_point,
+    ],
+}
+
+modifier_field! {
+    ImageSnap,
+    wait_for_trigger: WaitForTrigger,
+    [
+        imaging_style,
+        beeper,
+        led,
+        exposure,
+        gain,
+        target_white_value,
+        delta_for_acceptance,
+        update_tries,
+        target_set_point,
+    ],
+}
+
+modifier_field! {
+    ImageSnap,
+    led: LED,
+    [
+        imaging_style,
+        beeper,
+        wait_for_trigger,
+        exposure,
+        gain,
+        target_white_value,
+        delta_for_acceptance,
+        update_tries,
+        target_set_point,
+    ],
+}
+
+modifier_field! {
+    ImageSnap,
+    exposure: Exposure,
+    [
+        imaging_style,
+        beeper,
+        wait_for_trigger,
+        led,
+        gain,
+        target_white_value,
+        delta_for_acceptance,
+        update_tries,
+        target_set_point,
+    ],
+}
+
+modifier_field! {
+    ImageSnap,
+    gain: Gain,
+    [
+        imaging_style,
+        beeper,
+        wait_for_trigger,
+        led,
+        exposure,
+        target_white_value,
+        delta_for_acceptance,
+        update_tries,
+        target_set_point,
+    ],
+}
+
+modifier_field! {
+    ImageSnap,
+    target_white_value: TargetWhiteValue,
+    [
+        imaging_style,
+        beeper,
+        wait_for_trigger,
+        led,
+        exposure,
+        gain,
+        delta_for_acceptance,
+        update_tries,
+        target_set_point,
+    ],
+}
+
+modifier_field! {
+    ImageSnap,
+    delta_for_acceptance: DeltaForAcceptance,
+    [
+        imaging_style,
+        beeper,
+        wait_for_trigger,
+        led,
+        exposure,
+        gain,
+        target_white_value,
+        update_tries,
+        target_set_point,
+    ],
+}
+
+modifier_field! {
+    ImageSnap,
+    update_tries: UpdateTries,
+    [
+        imaging_style,
+        beeper,
+        wait_for_trigger,
+        led,
+        exposure,
+        gain,
+        target_white_value,
+        delta_for_acceptance,
+        target_set_point,
+    ],
+}
+
+modifier_field! {
+    ImageSnap,
+    target_set_point: TargetSetPoint,
+    [
+        imaging_style,
+        beeper,
+        wait_for_trigger,
+        led,
+        exposure,
+        gain,
+        target_white_value,
+        delta_for_acceptance,
+        update_tries,
+    ],
+}
 
 impl ImageSnap {
     /// Creates a new [ImageSnap].
@@ -91,166 +218,6 @@ impl ImageSnap {
             delta_for_acceptance: None,
             update_tries: None,
             target_set_point: None,
-        }
-    }
-
-    /// Builder function that sets the [ImagingStyle].
-    pub const fn with_imaging_style(self, val: ImagingStyle) -> Self {
-        Self {
-            imaging_style: Some(val),
-            beeper: self.beeper,
-            wait_for_trigger: self.wait_for_trigger,
-            led: self.led,
-            exposure: self.exposure,
-            gain: self.gain,
-            target_white_value: self.target_white_value,
-            delta_for_acceptance: self.delta_for_acceptance,
-            update_tries: self.update_tries,
-            target_set_point: self.target_set_point,
-        }
-    }
-
-    /// Builder function that sets the [Beeper].
-    pub const fn with_beeper(self, val: Beeper) -> Self {
-        Self {
-            imaging_style: self.imaging_style,
-            beeper: Some(val),
-            wait_for_trigger: self.wait_for_trigger,
-            led: self.led,
-            exposure: self.exposure,
-            gain: self.gain,
-            target_white_value: self.target_white_value,
-            delta_for_acceptance: self.delta_for_acceptance,
-            update_tries: self.update_tries,
-            target_set_point: self.target_set_point,
-        }
-    }
-
-    /// Builder function that sets the [WaitForTrigger].
-    pub const fn with_wait_for_trigger(self, val: WaitForTrigger) -> Self {
-        Self {
-            imaging_style: self.imaging_style,
-            beeper: self.beeper,
-            wait_for_trigger: Some(val),
-            led: self.led,
-            exposure: self.exposure,
-            gain: self.gain,
-            target_white_value: self.target_white_value,
-            delta_for_acceptance: self.delta_for_acceptance,
-            update_tries: self.update_tries,
-            target_set_point: self.target_set_point,
-        }
-    }
-
-    /// Builder function that sets the [LED].
-    pub const fn with_led(self, val: LED) -> Self {
-        Self {
-            imaging_style: self.imaging_style,
-            beeper: self.beeper,
-            wait_for_trigger: self.wait_for_trigger,
-            led: Some(val),
-            exposure: self.exposure,
-            gain: self.gain,
-            target_white_value: self.target_white_value,
-            delta_for_acceptance: self.delta_for_acceptance,
-            update_tries: self.update_tries,
-            target_set_point: self.target_set_point,
-        }
-    }
-
-    /// Builder function that sets the [Exposure].
-    pub const fn with_exposure(self, val: Exposure) -> Self {
-        Self {
-            imaging_style: self.imaging_style,
-            beeper: self.beeper,
-            wait_for_trigger: self.wait_for_trigger,
-            led: self.led,
-            exposure: Some(val),
-            gain: self.gain,
-            target_white_value: self.target_white_value,
-            delta_for_acceptance: self.delta_for_acceptance,
-            update_tries: self.update_tries,
-            target_set_point: self.target_set_point,
-        }
-    }
-
-    /// Builder function that sets the [Gain].
-    pub const fn with_gain(self, val: Gain) -> Self {
-        Self {
-            imaging_style: self.imaging_style,
-            beeper: self.beeper,
-            wait_for_trigger: self.wait_for_trigger,
-            led: self.led,
-            exposure: self.exposure,
-            gain: Some(val),
-            target_white_value: self.target_white_value,
-            delta_for_acceptance: self.delta_for_acceptance,
-            update_tries: self.update_tries,
-            target_set_point: self.target_set_point,
-        }
-    }
-
-    /// Builder function that sets the [TargetWhiteValue].
-    pub const fn with_target_white_value(self, val: TargetWhiteValue) -> Self {
-        Self {
-            imaging_style: self.imaging_style,
-            beeper: self.beeper,
-            wait_for_trigger: self.wait_for_trigger,
-            led: self.led,
-            exposure: self.exposure,
-            gain: self.gain,
-            target_white_value: Some(val),
-            delta_for_acceptance: self.delta_for_acceptance,
-            update_tries: self.update_tries,
-            target_set_point: self.target_set_point,
-        }
-    }
-
-    /// Builder function that sets the [DeltaForAcceptance].
-    pub const fn with_delta_for_acceptance(self, val: DeltaForAcceptance) -> Self {
-        Self {
-            imaging_style: self.imaging_style,
-            beeper: self.beeper,
-            wait_for_trigger: self.wait_for_trigger,
-            led: self.led,
-            exposure: self.exposure,
-            gain: self.gain,
-            target_white_value: self.target_white_value,
-            delta_for_acceptance: Some(val),
-            update_tries: self.update_tries,
-            target_set_point: self.target_set_point,
-        }
-    }
-
-    /// Builder function that sets the [UpdateTries].
-    pub const fn with_update_tries(self, val: UpdateTries) -> Self {
-        Self {
-            imaging_style: self.imaging_style,
-            beeper: self.beeper,
-            wait_for_trigger: self.wait_for_trigger,
-            led: self.led,
-            exposure: self.exposure,
-            gain: self.gain,
-            target_white_value: self.target_white_value,
-            delta_for_acceptance: self.delta_for_acceptance,
-            update_tries: Some(val),
-            target_set_point: self.target_set_point,
-        }
-    }
-
-    /// Builder function that sets the [TargetSetPoint].
-    pub const fn with_target_set_point(self, val: TargetSetPoint) -> Self {
-        Self {
-            imaging_style: self.imaging_style,
-            beeper: self.beeper,
-            wait_for_trigger: self.wait_for_trigger,
-            led: self.led,
-            exposure: self.exposure,
-            gain: self.gain,
-            target_white_value: self.target_white_value,
-            delta_for_acceptance: self.delta_for_acceptance,
-            update_tries: self.update_tries,
-            target_set_point: Some(val),
         }
     }
 
