@@ -1,7 +1,4 @@
-use alloc::string::{String, ToString};
-
-use crate::result::{Error, Result};
-use crate::modifier_field;
+use crate::{modifier_command, modifier_field};
 
 mod blur_image;
 mod compensation;
@@ -35,26 +32,25 @@ pub use pixel_depth::*;
 pub use pixel_ship::*;
 pub use protocol::*;
 
-const IMAGE_SHIP: &str = "IMGSHP";
-
-/// Configure all barcode `Image Ship` encodings.
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub struct ImageShip {
-    infinity_filter: Option<InfinityFilter>,
-    compensation: Option<Compensation>,
-    pixel_depth: Option<PixelDepth>,
-    edge_sharpen: Option<EdgeSharpen>,
-    histogram_stretch: Option<HistogramStretch>,
-    invert_image: Option<InvertImage>,
-    noise_reduction: Option<NoiseReduction>,
-    image_rotate: Option<ImageRotate>,
-    jpeg_image_quality: Option<JpegImageQuality>,
-    gamma_correction: Option<GammaCorrection>,
-    protocol: Option<Protocol>,
-    pixel_ship: Option<PixelShip>,
-    document_filter: Option<DocumentFilter>,
-    blur_image: Option<BlurImage>,
-    histogram_ship: Option<HistogramShip>,
+modifier_command! {
+    /// Configure all barcode `Image Ship` encodings.
+    ImageShip: "IMGSHP" {
+        infinity_filter: InfinityFilter,
+        compensation: Compensation,
+        pixel_depth: PixelDepth,
+        edge_sharpen: EdgeSharpen,
+        histogram_stretch: HistogramStretch,
+        invert_image: InvertImage,
+        noise_reduction: NoiseReduction,
+        image_rotate: ImageRotate,
+        jpeg_image_quality: JpegImageQuality,
+        gamma_correction: GammaCorrection,
+        protocol: Protocol,
+        pixel_ship: PixelShip,
+        document_filter: DocumentFilter,
+        blur_image: BlurImage,
+        histogram_ship: HistogramShip,
+    }
 }
 
 modifier_field! {
@@ -372,158 +368,6 @@ modifier_field! {
     ],
 }
 
-impl ImageShip {
-    /// Creates a new [ImageShip].
-    pub const fn new() -> Self {
-        Self {
-            infinity_filter: None,
-            compensation: None,
-            pixel_depth: None,
-            edge_sharpen: None,
-            histogram_stretch: None,
-            invert_image: None,
-            noise_reduction: None,
-            image_rotate: None,
-            jpeg_image_quality: None,
-            gamma_correction: None,
-            protocol: None,
-            pixel_ship: None,
-            document_filter: None,
-            blur_image: None,
-            histogram_ship: None,
-        }
-    }
-
-    /// Gets the ASCII serial command code for [ImageShip].
-    pub fn command(&self) -> String {
-        let infinity = self
-            .infinity_filter
-            .map(|v| v.command().to_string())
-            .unwrap_or_default();
-
-        let comp = self
-            .compensation
-            .map(|v| v.command().to_string())
-            .unwrap_or_default();
-
-        let depth = self
-            .pixel_depth
-            .map(|v| v.command().to_string())
-            .unwrap_or_default();
-
-        let edge = self
-            .edge_sharpen
-            .map(|v| v.command().to_string())
-            .unwrap_or_default();
-
-        let histo_stretch = self
-            .histogram_stretch
-            .map(|v| v.command().to_string())
-            .unwrap_or_default();
-
-        let invert = self
-            .invert_image
-            .map(|v| v.command().to_string())
-            .unwrap_or_default();
-
-        let noise = self
-            .noise_reduction
-            .map(|v| v.command().to_string())
-            .unwrap_or_default();
-
-        let rotate = self
-            .image_rotate
-            .map(|v| v.command().to_string())
-            .unwrap_or_default();
-
-        let jpeg = self
-            .jpeg_image_quality
-            .map(|v| v.command().to_string())
-            .unwrap_or_default();
-
-        let gamma = self
-            .gamma_correction
-            .map(|v| v.command().to_string())
-            .unwrap_or_default();
-
-        let proto = self
-            .protocol
-            .map(|v| v.command().to_string())
-            .unwrap_or_default();
-
-        let pixel = self
-            .pixel_ship
-            .map(|v| v.command().to_string())
-            .unwrap_or_default();
-
-        let doc = self
-            .document_filter
-            .map(|v| v.command().to_string())
-            .unwrap_or_default();
-
-        let blur = self
-            .blur_image
-            .map(|v| v.command().to_string())
-            .unwrap_or_default();
-
-        let histo_ship = self
-            .histogram_ship
-            .map(|v| v.command().to_string())
-            .unwrap_or_default();
-
-        format!(
-            "{IMAGE_SHIP}{infinity}{comp}{depth}{edge}{histo_stretch}{invert}{noise}{rotate}{jpeg}{gamma}{proto}{pixel}{doc}{blur}{histo_ship}"
-        )
-    }
-}
-
-impl Default for ImageShip {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-impl TryFrom<&str> for ImageShip {
-    type Error = Error;
-
-    fn try_from(val: &str) -> Result<Self> {
-        let rem = val.strip_prefix(IMAGE_SHIP).ok_or(Error::InvalidVariant)?;
-        let infinity_filter = InfinityFilter::try_from(rem).ok();
-        let compensation = Compensation::try_from(rem).ok();
-        let pixel_depth = PixelDepth::try_from(rem).ok();
-        let edge_sharpen = EdgeSharpen::try_from(rem).ok();
-        let histogram_stretch = HistogramStretch::try_from(rem).ok();
-        let invert_image = InvertImage::try_from(rem).ok();
-        let noise_reduction = NoiseReduction::try_from(rem).ok();
-        let image_rotate = ImageRotate::try_from(rem).ok();
-        let jpeg_image_quality = JpegImageQuality::try_from(rem).ok();
-        let gamma_correction = GammaCorrection::try_from(rem).ok();
-        let protocol = Protocol::try_from(rem).ok();
-        let pixel_ship = PixelShip::try_from(rem).ok();
-        let document_filter = DocumentFilter::try_from(rem).ok();
-        let blur_image = BlurImage::try_from(rem).ok();
-        let histogram_ship = HistogramShip::try_from(rem).ok();
-
-        Ok(Self {
-            infinity_filter,
-            compensation,
-            pixel_depth,
-            edge_sharpen,
-            histogram_stretch,
-            invert_image,
-            noise_reduction,
-            image_rotate,
-            jpeg_image_quality,
-            gamma_correction,
-            protocol,
-            pixel_ship,
-            document_filter,
-            blur_image,
-            histogram_ship,
-        })
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -558,13 +402,14 @@ mod tests {
         let exp_document_filter = DocumentFilter::new();
         let exp_blur_image = BlurImage::new();
         let exp_histogram_ship = HistogramShip::new();
+        let prefix = ImageShip::prefix();
 
         [
             "", "0A", "0C", "8D", "0H", "1ix", "0if", "0ir", "50J", "0K", "0P", "1S", "0U", "0V",
             "0W",
         ]
         .into_iter()
-        .map(|s| format!("{IMAGE_SHIP}{s}"))
+        .map(|s| format!("{prefix}{s}"))
         .zip([
             ImageShip::new(),
             ImageShip::new().with_infinity_filter(exp_infinity_filter),
