@@ -12,6 +12,7 @@ mod invert_image;
 mod jpeg_image_quality;
 mod noise_reduction;
 mod pixel_depth;
+mod protocol;
 
 pub use compensation::*;
 pub use edge_sharpen::*;
@@ -23,6 +24,7 @@ pub use invert_image::*;
 pub use jpeg_image_quality::*;
 pub use noise_reduction::*;
 pub use pixel_depth::*;
+pub use protocol::*;
 
 const IMAGE_SHIP: &str = "IMGSHP";
 
@@ -39,6 +41,7 @@ pub struct ImageShip {
     image_rotate: Option<ImageRotate>,
     jpeg_image_quality: Option<JpegImageQuality>,
     gamma_correction: Option<GammaCorrection>,
+    protocol: Option<Protocol>,
 }
 
 macro_rules! image_ship_field {
@@ -74,6 +77,7 @@ image_ship_field!(noise_reduction: NoiseReduction);
 image_ship_field!(image_rotate: ImageRotate);
 image_ship_field!(jpeg_image_quality: JpegImageQuality);
 image_ship_field!(gamma_correction: GammaCorrection);
+image_ship_field!(protocol: Protocol);
 
 impl ImageShip {
     /// Creates a new [ImageShip].
@@ -89,6 +93,7 @@ impl ImageShip {
             image_rotate: None,
             jpeg_image_quality: None,
             gamma_correction: None,
+            protocol: None,
         }
     }
 
@@ -105,6 +110,7 @@ impl ImageShip {
             image_rotate: self.image_rotate,
             jpeg_image_quality: self.jpeg_image_quality,
             gamma_correction: self.gamma_correction,
+            protocol: self.protocol,
         }
     }
 
@@ -121,6 +127,7 @@ impl ImageShip {
             image_rotate: self.image_rotate,
             jpeg_image_quality: self.jpeg_image_quality,
             gamma_correction: self.gamma_correction,
+            protocol: self.protocol,
         }
     }
 
@@ -137,6 +144,7 @@ impl ImageShip {
             image_rotate: self.image_rotate,
             jpeg_image_quality: self.jpeg_image_quality,
             gamma_correction: self.gamma_correction,
+            protocol: self.protocol,
         }
     }
 
@@ -153,6 +161,7 @@ impl ImageShip {
             image_rotate: self.image_rotate,
             jpeg_image_quality: self.jpeg_image_quality,
             gamma_correction: self.gamma_correction,
+            protocol: self.protocol,
         }
     }
 
@@ -169,6 +178,7 @@ impl ImageShip {
             image_rotate: self.image_rotate,
             jpeg_image_quality: self.jpeg_image_quality,
             gamma_correction: self.gamma_correction,
+            protocol: self.protocol,
         }
     }
 
@@ -185,6 +195,7 @@ impl ImageShip {
             image_rotate: self.image_rotate,
             jpeg_image_quality: self.jpeg_image_quality,
             gamma_correction: self.gamma_correction,
+            protocol: self.protocol,
         }
     }
 
@@ -201,6 +212,7 @@ impl ImageShip {
             image_rotate: self.image_rotate,
             jpeg_image_quality: self.jpeg_image_quality,
             gamma_correction: self.gamma_correction,
+            protocol: self.protocol,
         }
     }
 
@@ -217,6 +229,7 @@ impl ImageShip {
             image_rotate: Some(val),
             jpeg_image_quality: self.jpeg_image_quality,
             gamma_correction: self.gamma_correction,
+            protocol: self.protocol,
         }
     }
 
@@ -233,6 +246,7 @@ impl ImageShip {
             image_rotate: self.image_rotate,
             jpeg_image_quality: Some(val),
             gamma_correction: self.gamma_correction,
+            protocol: self.protocol,
         }
     }
 
@@ -249,6 +263,24 @@ impl ImageShip {
             image_rotate: self.image_rotate,
             jpeg_image_quality: self.jpeg_image_quality,
             gamma_correction: Some(val),
+            protocol: self.protocol,
+        }
+    }
+
+    /// Builder function that sets the [Protocol].
+    pub const fn with_protocol(self, val: Protocol) -> Self {
+        Self {
+            infinity_filter: self.infinity_filter,
+            compensation: self.compensation,
+            pixel_depth: self.pixel_depth,
+            edge_sharpen: self.edge_sharpen,
+            histogram_stretch: self.histogram_stretch,
+            invert_image: self.invert_image,
+            noise_reduction: self.noise_reduction,
+            image_rotate: self.image_rotate,
+            jpeg_image_quality: self.jpeg_image_quality,
+            gamma_correction: self.gamma_correction,
+            protocol: Some(val),
         }
     }
 
@@ -304,8 +336,13 @@ impl ImageShip {
             .map(|v| v.command().to_string())
             .unwrap_or_default();
 
+        let proto = self
+            .protocol
+            .map(|v| v.command().to_string())
+            .unwrap_or_default();
+
         format!(
-            "{IMAGE_SHIP}{infinity}{comp}{depth}{edge}{histo}{invert}{noise}{rotate}{jpeg}{gamma}"
+            "{IMAGE_SHIP}{infinity}{comp}{depth}{edge}{histo}{invert}{noise}{rotate}{jpeg}{gamma}{proto}"
         )
     }
 }
@@ -331,6 +368,7 @@ impl TryFrom<&str> for ImageShip {
         let image_rotate = ImageRotate::try_from(rem).ok();
         let jpeg_image_quality = JpegImageQuality::try_from(rem).ok();
         let gamma_correction = GammaCorrection::try_from(rem).ok();
+        let protocol = Protocol::try_from(rem).ok();
 
         Ok(Self {
             infinity_filter,
@@ -343,6 +381,7 @@ impl TryFrom<&str> for ImageShip {
             image_rotate,
             jpeg_image_quality,
             gamma_correction,
+            protocol,
         })
     }
 }
@@ -376,26 +415,30 @@ mod tests {
         let exp_image_rotate = ImageRotate::new();
         let exp_jpeg_image_quality = JpegImageQuality::new();
         let exp_gamma_correction = GammaCorrection::new();
+        let exp_protocol = Protocol::new();
 
-        ["", "0A", "0C", "8D", "0H", "1ix", "0if", "0ir", "50J", "0K"]
-            .into_iter()
-            .map(|s| format!("{IMAGE_SHIP}{s}"))
-            .zip([
-                ImageShip::new(),
-                ImageShip::new().with_infinity_filter(exp_infinity_filter),
-                ImageShip::new().with_compensation(exp_compensation),
-                ImageShip::new().with_pixel_depth(exp_pixel_depth),
-                ImageShip::new().with_histogram_stretch(exp_histogram_stretch),
-                ImageShip::new().with_invert_image(exp_invert_image),
-                ImageShip::new().with_noise_reduction(exp_noise_reduction),
-                ImageShip::new().with_image_rotate(exp_image_rotate),
-                ImageShip::new().with_jpeg_image_quality(exp_jpeg_image_quality),
-                ImageShip::new().with_gamma_correction(exp_gamma_correction),
-            ])
-            .for_each(|(img_str, exp_img_ship)| {
-                assert_eq!(ImageShip::try_from(img_str.as_str()), Ok(exp_img_ship));
-                assert_eq!(exp_img_ship.command(), img_str);
-            });
+        [
+            "", "0A", "0C", "8D", "0H", "1ix", "0if", "0ir", "50J", "0K", "0P",
+        ]
+        .into_iter()
+        .map(|s| format!("{IMAGE_SHIP}{s}"))
+        .zip([
+            ImageShip::new(),
+            ImageShip::new().with_infinity_filter(exp_infinity_filter),
+            ImageShip::new().with_compensation(exp_compensation),
+            ImageShip::new().with_pixel_depth(exp_pixel_depth),
+            ImageShip::new().with_histogram_stretch(exp_histogram_stretch),
+            ImageShip::new().with_invert_image(exp_invert_image),
+            ImageShip::new().with_noise_reduction(exp_noise_reduction),
+            ImageShip::new().with_image_rotate(exp_image_rotate),
+            ImageShip::new().with_jpeg_image_quality(exp_jpeg_image_quality),
+            ImageShip::new().with_gamma_correction(exp_gamma_correction),
+            ImageShip::new().with_protocol(exp_protocol),
+        ])
+        .for_each(|(img_str, exp_img_ship)| {
+            assert_eq!(ImageShip::try_from(img_str.as_str()), Ok(exp_img_ship));
+            assert_eq!(exp_img_ship.command(), img_str);
+        });
 
         let mut img = ImageShip::new();
 
@@ -408,5 +451,6 @@ mod tests {
         test_image_ship_field!(img, image_rotate, exp_image_rotate);
         test_image_ship_field!(img, jpeg_image_quality, exp_jpeg_image_quality);
         test_image_ship_field!(img, gamma_correction, exp_gamma_correction);
+        test_image_ship_field!(img, protocol, exp_protocol);
     }
 }
