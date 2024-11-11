@@ -7,6 +7,7 @@ mod compensation;
 mod document_filter;
 mod edge_sharpen;
 mod gamma_correction;
+mod histogram_ship;
 mod histogram_stretch;
 mod image_rotate;
 mod infinity_filter;
@@ -22,6 +23,7 @@ pub use compensation::*;
 pub use document_filter::*;
 pub use edge_sharpen::*;
 pub use gamma_correction::*;
+pub use histogram_ship::*;
 pub use histogram_stretch::*;
 pub use image_rotate::*;
 pub use infinity_filter::*;
@@ -51,6 +53,7 @@ pub struct ImageShip {
     pixel_ship: Option<PixelShip>,
     document_filter: Option<DocumentFilter>,
     blur_image: Option<BlurImage>,
+    histogram_ship: Option<HistogramShip>,
 }
 
 macro_rules! image_ship_field {
@@ -90,6 +93,7 @@ image_ship_field!(protocol: Protocol);
 image_ship_field!(pixel_ship: PixelShip);
 image_ship_field!(document_filter: DocumentFilter);
 image_ship_field!(blur_image: BlurImage);
+image_ship_field!(histogram_ship: HistogramShip);
 
 impl ImageShip {
     /// Creates a new [ImageShip].
@@ -109,6 +113,7 @@ impl ImageShip {
             pixel_ship: None,
             document_filter: None,
             blur_image: None,
+            histogram_ship: None,
         }
     }
 
@@ -129,6 +134,7 @@ impl ImageShip {
             pixel_ship: self.pixel_ship,
             document_filter: self.document_filter,
             blur_image: self.blur_image,
+            histogram_ship: self.histogram_ship,
         }
     }
 
@@ -149,6 +155,7 @@ impl ImageShip {
             pixel_ship: self.pixel_ship,
             document_filter: self.document_filter,
             blur_image: self.blur_image,
+            histogram_ship: self.histogram_ship,
         }
     }
 
@@ -169,6 +176,7 @@ impl ImageShip {
             pixel_ship: self.pixel_ship,
             document_filter: self.document_filter,
             blur_image: self.blur_image,
+            histogram_ship: self.histogram_ship,
         }
     }
 
@@ -189,6 +197,7 @@ impl ImageShip {
             pixel_ship: self.pixel_ship,
             document_filter: self.document_filter,
             blur_image: self.blur_image,
+            histogram_ship: self.histogram_ship,
         }
     }
 
@@ -209,6 +218,7 @@ impl ImageShip {
             pixel_ship: self.pixel_ship,
             document_filter: self.document_filter,
             blur_image: self.blur_image,
+            histogram_ship: self.histogram_ship,
         }
     }
 
@@ -229,6 +239,7 @@ impl ImageShip {
             pixel_ship: self.pixel_ship,
             document_filter: self.document_filter,
             blur_image: self.blur_image,
+            histogram_ship: self.histogram_ship,
         }
     }
 
@@ -249,6 +260,7 @@ impl ImageShip {
             pixel_ship: self.pixel_ship,
             document_filter: self.document_filter,
             blur_image: self.blur_image,
+            histogram_ship: self.histogram_ship,
         }
     }
 
@@ -269,6 +281,7 @@ impl ImageShip {
             pixel_ship: self.pixel_ship,
             document_filter: self.document_filter,
             blur_image: self.blur_image,
+            histogram_ship: self.histogram_ship,
         }
     }
 
@@ -289,6 +302,7 @@ impl ImageShip {
             pixel_ship: self.pixel_ship,
             document_filter: self.document_filter,
             blur_image: self.blur_image,
+            histogram_ship: self.histogram_ship,
         }
     }
 
@@ -309,6 +323,7 @@ impl ImageShip {
             pixel_ship: self.pixel_ship,
             document_filter: self.document_filter,
             blur_image: self.blur_image,
+            histogram_ship: self.histogram_ship,
         }
     }
 
@@ -329,6 +344,7 @@ impl ImageShip {
             pixel_ship: self.pixel_ship,
             document_filter: self.document_filter,
             blur_image: self.blur_image,
+            histogram_ship: self.histogram_ship,
         }
     }
 
@@ -349,6 +365,7 @@ impl ImageShip {
             pixel_ship: Some(val),
             document_filter: self.document_filter,
             blur_image: self.blur_image,
+            histogram_ship: self.histogram_ship,
         }
     }
 
@@ -369,6 +386,7 @@ impl ImageShip {
             pixel_ship: self.pixel_ship,
             document_filter: Some(val),
             blur_image: self.blur_image,
+            histogram_ship: self.histogram_ship,
         }
     }
 
@@ -389,6 +407,28 @@ impl ImageShip {
             pixel_ship: self.pixel_ship,
             document_filter: self.document_filter,
             blur_image: Some(val),
+            histogram_ship: self.histogram_ship,
+        }
+    }
+
+    /// Builder function that sets the [HistogramShip].
+    pub const fn with_histogram_ship(self, val: HistogramShip) -> Self {
+        Self {
+            infinity_filter: self.infinity_filter,
+            compensation: self.compensation,
+            pixel_depth: self.pixel_depth,
+            edge_sharpen: self.edge_sharpen,
+            histogram_stretch: self.histogram_stretch,
+            invert_image: self.invert_image,
+            noise_reduction: self.noise_reduction,
+            image_rotate: self.image_rotate,
+            jpeg_image_quality: self.jpeg_image_quality,
+            gamma_correction: self.gamma_correction,
+            protocol: self.protocol,
+            pixel_ship: self.pixel_ship,
+            document_filter: self.document_filter,
+            blur_image: self.blur_image,
+            histogram_ship: Some(val),
         }
     }
 
@@ -414,7 +454,7 @@ impl ImageShip {
             .map(|v| v.command().to_string())
             .unwrap_or_default();
 
-        let histo = self
+        let histo_stretch = self
             .histogram_stretch
             .map(|v| v.command().to_string())
             .unwrap_or_default();
@@ -464,8 +504,13 @@ impl ImageShip {
             .map(|v| v.command().to_string())
             .unwrap_or_default();
 
+        let histo_ship = self
+            .histogram_ship
+            .map(|v| v.command().to_string())
+            .unwrap_or_default();
+
         format!(
-            "{IMAGE_SHIP}{infinity}{comp}{depth}{edge}{histo}{invert}{noise}{rotate}{jpeg}{gamma}{proto}{pixel}{doc}{blur}"
+            "{IMAGE_SHIP}{infinity}{comp}{depth}{edge}{histo_stretch}{invert}{noise}{rotate}{jpeg}{gamma}{proto}{pixel}{doc}{blur}{histo_ship}"
         )
     }
 }
@@ -495,6 +540,7 @@ impl TryFrom<&str> for ImageShip {
         let pixel_ship = PixelShip::try_from(rem).ok();
         let document_filter = DocumentFilter::try_from(rem).ok();
         let blur_image = BlurImage::try_from(rem).ok();
+        let histogram_ship = HistogramShip::try_from(rem).ok();
 
         Ok(Self {
             infinity_filter,
@@ -511,6 +557,7 @@ impl TryFrom<&str> for ImageShip {
             pixel_ship,
             document_filter,
             blur_image,
+            histogram_ship,
         })
     }
 }
@@ -548,9 +595,11 @@ mod tests {
         let exp_pixel_ship = PixelShip::new();
         let exp_document_filter = DocumentFilter::new();
         let exp_blur_image = BlurImage::new();
+        let exp_histogram_ship = HistogramShip::new();
 
         [
-            "", "0A", "0C", "8D", "0H", "1ix", "0if", "0ir", "50J", "0K", "0P", "1S", "0U",
+            "", "0A", "0C", "8D", "0H", "1ix", "0if", "0ir", "50J", "0K", "0P", "1S", "0U", "0V",
+            "0W",
         ]
         .into_iter()
         .map(|s| format!("{IMAGE_SHIP}{s}"))
@@ -569,6 +618,7 @@ mod tests {
             ImageShip::new().with_pixel_ship(exp_pixel_ship),
             ImageShip::new().with_document_filter(exp_document_filter),
             ImageShip::new().with_blur_image(exp_blur_image),
+            ImageShip::new().with_histogram_ship(exp_histogram_ship),
         ])
         .for_each(|(img_str, exp_img_ship)| {
             assert_eq!(ImageShip::try_from(img_str.as_str()), Ok(exp_img_ship));
@@ -590,5 +640,6 @@ mod tests {
         test_image_ship_field!(img, pixel_ship, exp_pixel_ship);
         test_image_ship_field!(img, document_filter, exp_document_filter);
         test_image_ship_field!(img, blur_image, exp_blur_image);
+        test_image_ship_field!(img, histogram_ship, exp_histogram_ship);
     }
 }
