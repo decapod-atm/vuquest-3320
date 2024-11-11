@@ -57,7 +57,7 @@ pub struct ImageShip {
 }
 
 macro_rules! image_ship_field {
-    ($field:ident: $field_ty:ty) => {
+    ($field:ident: $field_ty:ty, [$($not_field:ident$(,)?)+]$(,)?) => {
         paste::paste! {
             impl ImageShip {
                 #[doc = "Gets the [" $field_ty "] for [ImageShip]."]
@@ -74,26 +74,318 @@ macro_rules! image_ship_field {
                 pub fn [<unset_ $field>](&mut self) {
                     self.$field = None;
                 }
+
+                #[doc = "Builder function that sets the [" $field_ty "] for [ImageShip]."]
+                pub const fn [<with_ $field>](self, val: $field_ty) -> Self {
+                    Self {
+                        $field: Some(val),
+                        $($not_field: self.$not_field,)+
+                    }
+                }
             }
         }
     };
 }
 
-image_ship_field!(infinity_filter: InfinityFilter);
-image_ship_field!(compensation: Compensation);
-image_ship_field!(pixel_depth: PixelDepth);
-image_ship_field!(edge_sharpen: EdgeSharpen);
-image_ship_field!(histogram_stretch: HistogramStretch);
-image_ship_field!(invert_image: InvertImage);
-image_ship_field!(noise_reduction: NoiseReduction);
-image_ship_field!(image_rotate: ImageRotate);
-image_ship_field!(jpeg_image_quality: JpegImageQuality);
-image_ship_field!(gamma_correction: GammaCorrection);
-image_ship_field!(protocol: Protocol);
-image_ship_field!(pixel_ship: PixelShip);
-image_ship_field!(document_filter: DocumentFilter);
-image_ship_field!(blur_image: BlurImage);
-image_ship_field!(histogram_ship: HistogramShip);
+image_ship_field! {
+    infinity_filter: InfinityFilter,
+    [
+        compensation,
+        pixel_depth,
+        edge_sharpen,
+        histogram_stretch,
+        invert_image,
+        noise_reduction,
+        image_rotate,
+        jpeg_image_quality,
+        gamma_correction,
+        protocol,
+        pixel_ship,
+        document_filter,
+        blur_image,
+        histogram_ship,
+    ],
+}
+
+image_ship_field! {
+    compensation: Compensation,
+    [
+        infinity_filter,
+        pixel_depth,
+        edge_sharpen,
+        histogram_stretch,
+        invert_image,
+        noise_reduction,
+        image_rotate,
+        jpeg_image_quality,
+        gamma_correction,
+        protocol,
+        pixel_ship,
+        document_filter,
+        blur_image,
+        histogram_ship,
+    ],
+}
+
+image_ship_field! {
+    pixel_depth: PixelDepth,
+    [
+        infinity_filter,
+        compensation,
+        edge_sharpen,
+        histogram_stretch,
+        invert_image,
+        noise_reduction,
+        image_rotate,
+        jpeg_image_quality,
+        gamma_correction,
+        protocol,
+        pixel_ship,
+        document_filter,
+        blur_image,
+        histogram_ship,
+    ],
+}
+
+image_ship_field! {
+    edge_sharpen: EdgeSharpen,
+    [
+        infinity_filter,
+        compensation,
+        pixel_depth,
+        histogram_stretch,
+        invert_image,
+        noise_reduction,
+        image_rotate,
+        jpeg_image_quality,
+        gamma_correction,
+        protocol,
+        pixel_ship,
+        document_filter,
+        blur_image,
+        histogram_ship,
+    ],
+}
+
+image_ship_field! {
+    histogram_stretch: HistogramStretch,
+    [
+        infinity_filter,
+        compensation,
+        pixel_depth,
+        edge_sharpen,
+        invert_image,
+        noise_reduction,
+        image_rotate,
+        jpeg_image_quality,
+        gamma_correction,
+        protocol,
+        pixel_ship,
+        document_filter,
+        blur_image,
+        histogram_ship,
+    ],
+}
+
+image_ship_field! {
+    invert_image: InvertImage,
+    [
+        infinity_filter,
+        compensation,
+        pixel_depth,
+        edge_sharpen,
+        histogram_stretch,
+        noise_reduction,
+        image_rotate,
+        jpeg_image_quality,
+        gamma_correction,
+        protocol,
+        pixel_ship,
+        document_filter,
+        blur_image,
+        histogram_ship,
+    ],
+}
+
+image_ship_field! {
+    noise_reduction: NoiseReduction,
+    [
+        infinity_filter,
+        compensation,
+        pixel_depth,
+        edge_sharpen,
+        histogram_stretch,
+        invert_image,
+        image_rotate,
+        jpeg_image_quality,
+        gamma_correction,
+        protocol,
+        pixel_ship,
+        document_filter,
+        blur_image,
+        histogram_ship,
+    ],
+}
+
+image_ship_field! {
+    image_rotate: ImageRotate,
+    [
+        infinity_filter,
+        compensation,
+        pixel_depth,
+        edge_sharpen,
+        histogram_stretch,
+        invert_image,
+        noise_reduction,
+        jpeg_image_quality,
+        gamma_correction,
+        protocol,
+        pixel_ship,
+        document_filter,
+        blur_image,
+        histogram_ship,
+    ],
+}
+
+image_ship_field! {
+    jpeg_image_quality: JpegImageQuality,
+    [
+        infinity_filter,
+        compensation,
+        pixel_depth,
+        edge_sharpen,
+        histogram_stretch,
+        invert_image,
+        noise_reduction,
+        image_rotate,
+        gamma_correction,
+        protocol,
+        pixel_ship,
+        document_filter,
+        blur_image,
+        histogram_ship,
+    ],
+}
+
+image_ship_field! {
+    gamma_correction: GammaCorrection,
+    [
+        infinity_filter,
+        compensation,
+        pixel_depth,
+        edge_sharpen,
+        histogram_stretch,
+        invert_image,
+        noise_reduction,
+        image_rotate,
+        jpeg_image_quality,
+        protocol,
+        pixel_ship,
+        document_filter,
+        blur_image,
+        histogram_ship,
+    ],
+}
+
+image_ship_field! {
+    protocol: Protocol,
+    [
+        infinity_filter,
+        compensation,
+        pixel_depth,
+        edge_sharpen,
+        histogram_stretch,
+        invert_image,
+        noise_reduction,
+        image_rotate,
+        jpeg_image_quality,
+        gamma_correction,
+        pixel_ship,
+        document_filter,
+        blur_image,
+        histogram_ship,
+    ],
+}
+
+image_ship_field! {
+    pixel_ship: PixelShip,
+    [
+        infinity_filter,
+        compensation,
+        pixel_depth,
+        edge_sharpen,
+        histogram_stretch,
+        invert_image,
+        noise_reduction,
+        image_rotate,
+        jpeg_image_quality,
+        gamma_correction,
+        protocol,
+        document_filter,
+        blur_image,
+        histogram_ship,
+    ],
+}
+
+image_ship_field! {
+    document_filter: DocumentFilter,
+    [
+        infinity_filter,
+        compensation,
+        pixel_depth,
+        edge_sharpen,
+        histogram_stretch,
+        invert_image,
+        noise_reduction,
+        image_rotate,
+        jpeg_image_quality,
+        gamma_correction,
+        protocol,
+        pixel_ship,
+        blur_image,
+        histogram_ship,
+    ],
+}
+
+image_ship_field! {
+    blur_image: BlurImage,
+    [
+        infinity_filter,
+        compensation,
+        pixel_depth,
+        edge_sharpen,
+        histogram_stretch,
+        invert_image,
+        noise_reduction,
+        image_rotate,
+        jpeg_image_quality,
+        gamma_correction,
+        protocol,
+        pixel_ship,
+        document_filter,
+        histogram_ship,
+    ],
+}
+
+image_ship_field! {
+    histogram_ship: HistogramShip,
+    [
+        infinity_filter,
+        compensation,
+        pixel_depth,
+        edge_sharpen,
+        histogram_stretch,
+        invert_image,
+        noise_reduction,
+        image_rotate,
+        jpeg_image_quality,
+        gamma_correction,
+        protocol,
+        pixel_ship,
+        document_filter,
+        blur_image,
+    ],
+}
 
 impl ImageShip {
     /// Creates a new [ImageShip].
@@ -114,321 +406,6 @@ impl ImageShip {
             document_filter: None,
             blur_image: None,
             histogram_ship: None,
-        }
-    }
-
-    /// Builder function that sets the [InfinityFilter].
-    pub const fn with_infinity_filter(self, val: InfinityFilter) -> Self {
-        Self {
-            infinity_filter: Some(val),
-            compensation: self.compensation,
-            pixel_depth: self.pixel_depth,
-            edge_sharpen: self.edge_sharpen,
-            histogram_stretch: self.histogram_stretch,
-            invert_image: self.invert_image,
-            noise_reduction: self.noise_reduction,
-            image_rotate: self.image_rotate,
-            jpeg_image_quality: self.jpeg_image_quality,
-            gamma_correction: self.gamma_correction,
-            protocol: self.protocol,
-            pixel_ship: self.pixel_ship,
-            document_filter: self.document_filter,
-            blur_image: self.blur_image,
-            histogram_ship: self.histogram_ship,
-        }
-    }
-
-    /// Builder function that sets the [Compensation].
-    pub const fn with_compensation(self, val: Compensation) -> Self {
-        Self {
-            infinity_filter: self.infinity_filter,
-            compensation: Some(val),
-            pixel_depth: self.pixel_depth,
-            edge_sharpen: self.edge_sharpen,
-            histogram_stretch: self.histogram_stretch,
-            invert_image: self.invert_image,
-            noise_reduction: self.noise_reduction,
-            image_rotate: self.image_rotate,
-            jpeg_image_quality: self.jpeg_image_quality,
-            gamma_correction: self.gamma_correction,
-            protocol: self.protocol,
-            pixel_ship: self.pixel_ship,
-            document_filter: self.document_filter,
-            blur_image: self.blur_image,
-            histogram_ship: self.histogram_ship,
-        }
-    }
-
-    /// Builder function that sets the [PixelDepth].
-    pub const fn with_pixel_depth(self, val: PixelDepth) -> Self {
-        Self {
-            infinity_filter: self.infinity_filter,
-            compensation: self.compensation,
-            pixel_depth: Some(val),
-            edge_sharpen: self.edge_sharpen,
-            histogram_stretch: self.histogram_stretch,
-            invert_image: self.invert_image,
-            noise_reduction: self.noise_reduction,
-            image_rotate: self.image_rotate,
-            jpeg_image_quality: self.jpeg_image_quality,
-            gamma_correction: self.gamma_correction,
-            protocol: self.protocol,
-            pixel_ship: self.pixel_ship,
-            document_filter: self.document_filter,
-            blur_image: self.blur_image,
-            histogram_ship: self.histogram_ship,
-        }
-    }
-
-    /// Builder function that sets the [EdgeSharpen].
-    pub const fn with_edge_sharpen(self, val: EdgeSharpen) -> Self {
-        Self {
-            infinity_filter: self.infinity_filter,
-            compensation: self.compensation,
-            pixel_depth: self.pixel_depth,
-            edge_sharpen: Some(val),
-            histogram_stretch: self.histogram_stretch,
-            invert_image: self.invert_image,
-            noise_reduction: self.noise_reduction,
-            image_rotate: self.image_rotate,
-            jpeg_image_quality: self.jpeg_image_quality,
-            gamma_correction: self.gamma_correction,
-            protocol: self.protocol,
-            pixel_ship: self.pixel_ship,
-            document_filter: self.document_filter,
-            blur_image: self.blur_image,
-            histogram_ship: self.histogram_ship,
-        }
-    }
-
-    /// Builder function that sets the [HistogramStretch].
-    pub const fn with_histogram_stretch(self, val: HistogramStretch) -> Self {
-        Self {
-            infinity_filter: self.infinity_filter,
-            compensation: self.compensation,
-            pixel_depth: self.pixel_depth,
-            edge_sharpen: self.edge_sharpen,
-            histogram_stretch: Some(val),
-            invert_image: self.invert_image,
-            noise_reduction: self.noise_reduction,
-            image_rotate: self.image_rotate,
-            jpeg_image_quality: self.jpeg_image_quality,
-            gamma_correction: self.gamma_correction,
-            protocol: self.protocol,
-            pixel_ship: self.pixel_ship,
-            document_filter: self.document_filter,
-            blur_image: self.blur_image,
-            histogram_ship: self.histogram_ship,
-        }
-    }
-
-    /// Builder function that sets the [InvertImage].
-    pub const fn with_invert_image(self, val: InvertImage) -> Self {
-        Self {
-            infinity_filter: self.infinity_filter,
-            compensation: self.compensation,
-            pixel_depth: self.pixel_depth,
-            edge_sharpen: self.edge_sharpen,
-            histogram_stretch: self.histogram_stretch,
-            invert_image: Some(val),
-            noise_reduction: self.noise_reduction,
-            image_rotate: self.image_rotate,
-            jpeg_image_quality: self.jpeg_image_quality,
-            gamma_correction: self.gamma_correction,
-            protocol: self.protocol,
-            pixel_ship: self.pixel_ship,
-            document_filter: self.document_filter,
-            blur_image: self.blur_image,
-            histogram_ship: self.histogram_ship,
-        }
-    }
-
-    /// Builder function that sets the [NoiseReduction].
-    pub const fn with_noise_reduction(self, val: NoiseReduction) -> Self {
-        Self {
-            infinity_filter: self.infinity_filter,
-            compensation: self.compensation,
-            pixel_depth: self.pixel_depth,
-            edge_sharpen: self.edge_sharpen,
-            histogram_stretch: self.histogram_stretch,
-            invert_image: self.invert_image,
-            noise_reduction: Some(val),
-            image_rotate: self.image_rotate,
-            jpeg_image_quality: self.jpeg_image_quality,
-            gamma_correction: self.gamma_correction,
-            protocol: self.protocol,
-            pixel_ship: self.pixel_ship,
-            document_filter: self.document_filter,
-            blur_image: self.blur_image,
-            histogram_ship: self.histogram_ship,
-        }
-    }
-
-    /// Builder function that sets the [ImageRotate].
-    pub const fn with_image_rotate(self, val: ImageRotate) -> Self {
-        Self {
-            infinity_filter: self.infinity_filter,
-            compensation: self.compensation,
-            pixel_depth: self.pixel_depth,
-            edge_sharpen: self.edge_sharpen,
-            histogram_stretch: self.histogram_stretch,
-            invert_image: self.invert_image,
-            noise_reduction: self.noise_reduction,
-            image_rotate: Some(val),
-            jpeg_image_quality: self.jpeg_image_quality,
-            gamma_correction: self.gamma_correction,
-            protocol: self.protocol,
-            pixel_ship: self.pixel_ship,
-            document_filter: self.document_filter,
-            blur_image: self.blur_image,
-            histogram_ship: self.histogram_ship,
-        }
-    }
-
-    /// Builder function that sets the [JpegImageQuality].
-    pub const fn with_jpeg_image_quality(self, val: JpegImageQuality) -> Self {
-        Self {
-            infinity_filter: self.infinity_filter,
-            compensation: self.compensation,
-            pixel_depth: self.pixel_depth,
-            edge_sharpen: self.edge_sharpen,
-            histogram_stretch: self.histogram_stretch,
-            invert_image: self.invert_image,
-            noise_reduction: self.noise_reduction,
-            image_rotate: self.image_rotate,
-            jpeg_image_quality: Some(val),
-            gamma_correction: self.gamma_correction,
-            protocol: self.protocol,
-            pixel_ship: self.pixel_ship,
-            document_filter: self.document_filter,
-            blur_image: self.blur_image,
-            histogram_ship: self.histogram_ship,
-        }
-    }
-
-    /// Builder function that sets the [GammaCorrection].
-    pub const fn with_gamma_correction(self, val: GammaCorrection) -> Self {
-        Self {
-            infinity_filter: self.infinity_filter,
-            compensation: self.compensation,
-            pixel_depth: self.pixel_depth,
-            edge_sharpen: self.edge_sharpen,
-            histogram_stretch: self.histogram_stretch,
-            invert_image: self.invert_image,
-            noise_reduction: self.noise_reduction,
-            image_rotate: self.image_rotate,
-            jpeg_image_quality: self.jpeg_image_quality,
-            gamma_correction: Some(val),
-            protocol: self.protocol,
-            pixel_ship: self.pixel_ship,
-            document_filter: self.document_filter,
-            blur_image: self.blur_image,
-            histogram_ship: self.histogram_ship,
-        }
-    }
-
-    /// Builder function that sets the [Protocol].
-    pub const fn with_protocol(self, val: Protocol) -> Self {
-        Self {
-            infinity_filter: self.infinity_filter,
-            compensation: self.compensation,
-            pixel_depth: self.pixel_depth,
-            edge_sharpen: self.edge_sharpen,
-            histogram_stretch: self.histogram_stretch,
-            invert_image: self.invert_image,
-            noise_reduction: self.noise_reduction,
-            image_rotate: self.image_rotate,
-            jpeg_image_quality: self.jpeg_image_quality,
-            gamma_correction: self.gamma_correction,
-            protocol: Some(val),
-            pixel_ship: self.pixel_ship,
-            document_filter: self.document_filter,
-            blur_image: self.blur_image,
-            histogram_ship: self.histogram_ship,
-        }
-    }
-
-    /// Builder function that sets the [PixelShip].
-    pub const fn with_pixel_ship(self, val: PixelShip) -> Self {
-        Self {
-            infinity_filter: self.infinity_filter,
-            compensation: self.compensation,
-            pixel_depth: self.pixel_depth,
-            edge_sharpen: self.edge_sharpen,
-            histogram_stretch: self.histogram_stretch,
-            invert_image: self.invert_image,
-            noise_reduction: self.noise_reduction,
-            image_rotate: self.image_rotate,
-            jpeg_image_quality: self.jpeg_image_quality,
-            gamma_correction: self.gamma_correction,
-            protocol: self.protocol,
-            pixel_ship: Some(val),
-            document_filter: self.document_filter,
-            blur_image: self.blur_image,
-            histogram_ship: self.histogram_ship,
-        }
-    }
-
-    /// Builder function that sets the [DocumentFilter].
-    pub const fn with_document_filter(self, val: DocumentFilter) -> Self {
-        Self {
-            infinity_filter: self.infinity_filter,
-            compensation: self.compensation,
-            pixel_depth: self.pixel_depth,
-            edge_sharpen: self.edge_sharpen,
-            histogram_stretch: self.histogram_stretch,
-            invert_image: self.invert_image,
-            noise_reduction: self.noise_reduction,
-            image_rotate: self.image_rotate,
-            jpeg_image_quality: self.jpeg_image_quality,
-            gamma_correction: self.gamma_correction,
-            protocol: self.protocol,
-            pixel_ship: self.pixel_ship,
-            document_filter: Some(val),
-            blur_image: self.blur_image,
-            histogram_ship: self.histogram_ship,
-        }
-    }
-
-    /// Builder function that sets the [BlurImage].
-    pub const fn with_blur_image(self, val: BlurImage) -> Self {
-        Self {
-            infinity_filter: self.infinity_filter,
-            compensation: self.compensation,
-            pixel_depth: self.pixel_depth,
-            edge_sharpen: self.edge_sharpen,
-            histogram_stretch: self.histogram_stretch,
-            invert_image: self.invert_image,
-            noise_reduction: self.noise_reduction,
-            image_rotate: self.image_rotate,
-            jpeg_image_quality: self.jpeg_image_quality,
-            gamma_correction: self.gamma_correction,
-            protocol: self.protocol,
-            pixel_ship: self.pixel_ship,
-            document_filter: self.document_filter,
-            blur_image: Some(val),
-            histogram_ship: self.histogram_ship,
-        }
-    }
-
-    /// Builder function that sets the [HistogramShip].
-    pub const fn with_histogram_ship(self, val: HistogramShip) -> Self {
-        Self {
-            infinity_filter: self.infinity_filter,
-            compensation: self.compensation,
-            pixel_depth: self.pixel_depth,
-            edge_sharpen: self.edge_sharpen,
-            histogram_stretch: self.histogram_stretch,
-            invert_image: self.invert_image,
-            noise_reduction: self.noise_reduction,
-            image_rotate: self.image_rotate,
-            jpeg_image_quality: self.jpeg_image_quality,
-            gamma_correction: self.gamma_correction,
-            protocol: self.protocol,
-            pixel_ship: self.pixel_ship,
-            document_filter: self.document_filter,
-            blur_image: self.blur_image,
-            histogram_ship: Some(val),
         }
     }
 
