@@ -1,6 +1,7 @@
 use alloc::string::{String, ToString};
 
 use crate::result::{Error, Result};
+use crate::modifier_field;
 
 mod blur_image;
 mod compensation;
@@ -56,38 +57,8 @@ pub struct ImageShip {
     histogram_ship: Option<HistogramShip>,
 }
 
-macro_rules! image_ship_field {
-    ($field:ident: $field_ty:ty, [$($not_field:ident$(,)?)+]$(,)?) => {
-        paste::paste! {
-            impl ImageShip {
-                #[doc = "Gets the [" $field_ty "] for [ImageShip]."]
-                pub const fn $field(&self) -> Option<$field_ty> {
-                    self.$field
-                }
-
-                #[doc = "Sets the [" $field_ty "] for [ImageShip]."]
-                pub fn [<set_ $field>](&mut self, val: $field_ty) {
-                    self.$field = Some(val);
-                }
-
-                #[doc = "Unsets the [" $field_ty "] for [ImageShip]."]
-                pub fn [<unset_ $field>](&mut self) {
-                    self.$field = None;
-                }
-
-                #[doc = "Builder function that sets the [" $field_ty "] for [ImageShip]."]
-                pub const fn [<with_ $field>](self, val: $field_ty) -> Self {
-                    Self {
-                        $field: Some(val),
-                        $($not_field: self.$not_field,)+
-                    }
-                }
-            }
-        }
-    };
-}
-
-image_ship_field! {
+modifier_field! {
+    ImageShip,
     infinity_filter: InfinityFilter,
     [
         compensation,
@@ -107,7 +78,8 @@ image_ship_field! {
     ],
 }
 
-image_ship_field! {
+modifier_field! {
+    ImageShip,
     compensation: Compensation,
     [
         infinity_filter,
@@ -127,7 +99,8 @@ image_ship_field! {
     ],
 }
 
-image_ship_field! {
+modifier_field! {
+    ImageShip,
     pixel_depth: PixelDepth,
     [
         infinity_filter,
@@ -147,7 +120,8 @@ image_ship_field! {
     ],
 }
 
-image_ship_field! {
+modifier_field! {
+    ImageShip,
     edge_sharpen: EdgeSharpen,
     [
         infinity_filter,
@@ -167,7 +141,8 @@ image_ship_field! {
     ],
 }
 
-image_ship_field! {
+modifier_field! {
+    ImageShip,
     histogram_stretch: HistogramStretch,
     [
         infinity_filter,
@@ -187,7 +162,8 @@ image_ship_field! {
     ],
 }
 
-image_ship_field! {
+modifier_field! {
+    ImageShip,
     invert_image: InvertImage,
     [
         infinity_filter,
@@ -207,7 +183,8 @@ image_ship_field! {
     ],
 }
 
-image_ship_field! {
+modifier_field! {
+    ImageShip,
     noise_reduction: NoiseReduction,
     [
         infinity_filter,
@@ -227,7 +204,8 @@ image_ship_field! {
     ],
 }
 
-image_ship_field! {
+modifier_field! {
+    ImageShip,
     image_rotate: ImageRotate,
     [
         infinity_filter,
@@ -247,7 +225,8 @@ image_ship_field! {
     ],
 }
 
-image_ship_field! {
+modifier_field! {
+    ImageShip,
     jpeg_image_quality: JpegImageQuality,
     [
         infinity_filter,
@@ -267,7 +246,8 @@ image_ship_field! {
     ],
 }
 
-image_ship_field! {
+modifier_field! {
+    ImageShip,
     gamma_correction: GammaCorrection,
     [
         infinity_filter,
@@ -287,7 +267,8 @@ image_ship_field! {
     ],
 }
 
-image_ship_field! {
+modifier_field! {
+    ImageShip,
     protocol: Protocol,
     [
         infinity_filter,
@@ -307,7 +288,8 @@ image_ship_field! {
     ],
 }
 
-image_ship_field! {
+modifier_field! {
+    ImageShip,
     pixel_ship: PixelShip,
     [
         infinity_filter,
@@ -327,7 +309,8 @@ image_ship_field! {
     ],
 }
 
-image_ship_field! {
+modifier_field! {
+    ImageShip,
     document_filter: DocumentFilter,
     [
         infinity_filter,
@@ -347,7 +330,8 @@ image_ship_field! {
     ],
 }
 
-image_ship_field! {
+modifier_field! {
+    ImageShip,
     blur_image: BlurImage,
     [
         infinity_filter,
@@ -367,7 +351,8 @@ image_ship_field! {
     ],
 }
 
-image_ship_field! {
+modifier_field! {
+    ImageShip,
     histogram_ship: HistogramShip,
     [
         infinity_filter,

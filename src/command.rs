@@ -6,6 +6,8 @@ use alloc::string::String;
 
 pub mod image_ship;
 pub mod image_snap;
+#[macro_use]
+mod macros;
 mod manual_trigger;
 mod mobile_phone;
 mod pdf;
