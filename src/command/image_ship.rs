@@ -12,6 +12,7 @@ mod invert_image;
 mod jpeg_image_quality;
 mod noise_reduction;
 mod pixel_depth;
+mod pixel_ship;
 mod protocol;
 
 pub use compensation::*;
@@ -24,6 +25,7 @@ pub use invert_image::*;
 pub use jpeg_image_quality::*;
 pub use noise_reduction::*;
 pub use pixel_depth::*;
+pub use pixel_ship::*;
 pub use protocol::*;
 
 const IMAGE_SHIP: &str = "IMGSHP";
@@ -42,6 +44,7 @@ pub struct ImageShip {
     jpeg_image_quality: Option<JpegImageQuality>,
     gamma_correction: Option<GammaCorrection>,
     protocol: Option<Protocol>,
+    pixel_ship: Option<PixelShip>,
 }
 
 macro_rules! image_ship_field {
@@ -78,6 +81,7 @@ image_ship_field!(image_rotate: ImageRotate);
 image_ship_field!(jpeg_image_quality: JpegImageQuality);
 image_ship_field!(gamma_correction: GammaCorrection);
 image_ship_field!(protocol: Protocol);
+image_ship_field!(pixel_ship: PixelShip);
 
 impl ImageShip {
     /// Creates a new [ImageShip].
@@ -94,6 +98,7 @@ impl ImageShip {
             jpeg_image_quality: None,
             gamma_correction: None,
             protocol: None,
+            pixel_ship: None,
         }
     }
 
@@ -111,6 +116,7 @@ impl ImageShip {
             jpeg_image_quality: self.jpeg_image_quality,
             gamma_correction: self.gamma_correction,
             protocol: self.protocol,
+            pixel_ship: self.pixel_ship,
         }
     }
 
@@ -128,6 +134,7 @@ impl ImageShip {
             jpeg_image_quality: self.jpeg_image_quality,
             gamma_correction: self.gamma_correction,
             protocol: self.protocol,
+            pixel_ship: self.pixel_ship,
         }
     }
 
@@ -145,6 +152,7 @@ impl ImageShip {
             jpeg_image_quality: self.jpeg_image_quality,
             gamma_correction: self.gamma_correction,
             protocol: self.protocol,
+            pixel_ship: self.pixel_ship,
         }
     }
 
@@ -162,6 +170,7 @@ impl ImageShip {
             jpeg_image_quality: self.jpeg_image_quality,
             gamma_correction: self.gamma_correction,
             protocol: self.protocol,
+            pixel_ship: self.pixel_ship,
         }
     }
 
@@ -179,6 +188,7 @@ impl ImageShip {
             jpeg_image_quality: self.jpeg_image_quality,
             gamma_correction: self.gamma_correction,
             protocol: self.protocol,
+            pixel_ship: self.pixel_ship,
         }
     }
 
@@ -196,6 +206,7 @@ impl ImageShip {
             jpeg_image_quality: self.jpeg_image_quality,
             gamma_correction: self.gamma_correction,
             protocol: self.protocol,
+            pixel_ship: self.pixel_ship,
         }
     }
 
@@ -213,6 +224,7 @@ impl ImageShip {
             jpeg_image_quality: self.jpeg_image_quality,
             gamma_correction: self.gamma_correction,
             protocol: self.protocol,
+            pixel_ship: self.pixel_ship,
         }
     }
 
@@ -230,6 +242,7 @@ impl ImageShip {
             jpeg_image_quality: self.jpeg_image_quality,
             gamma_correction: self.gamma_correction,
             protocol: self.protocol,
+            pixel_ship: self.pixel_ship,
         }
     }
 
@@ -247,6 +260,7 @@ impl ImageShip {
             jpeg_image_quality: Some(val),
             gamma_correction: self.gamma_correction,
             protocol: self.protocol,
+            pixel_ship: self.pixel_ship,
         }
     }
 
@@ -264,6 +278,7 @@ impl ImageShip {
             jpeg_image_quality: self.jpeg_image_quality,
             gamma_correction: Some(val),
             protocol: self.protocol,
+            pixel_ship: self.pixel_ship,
         }
     }
 
@@ -281,6 +296,25 @@ impl ImageShip {
             jpeg_image_quality: self.jpeg_image_quality,
             gamma_correction: self.gamma_correction,
             protocol: Some(val),
+            pixel_ship: self.pixel_ship,
+        }
+    }
+
+    /// Builder function that sets the [PixelShip].
+    pub const fn with_pixel_ship(self, val: PixelShip) -> Self {
+        Self {
+            infinity_filter: self.infinity_filter,
+            compensation: self.compensation,
+            pixel_depth: self.pixel_depth,
+            edge_sharpen: self.edge_sharpen,
+            histogram_stretch: self.histogram_stretch,
+            invert_image: self.invert_image,
+            noise_reduction: self.noise_reduction,
+            image_rotate: self.image_rotate,
+            jpeg_image_quality: self.jpeg_image_quality,
+            gamma_correction: self.gamma_correction,
+            protocol: self.protocol,
+            pixel_ship: Some(val),
         }
     }
 
@@ -341,8 +375,13 @@ impl ImageShip {
             .map(|v| v.command().to_string())
             .unwrap_or_default();
 
+        let pixel = self
+            .pixel_ship
+            .map(|v| v.command().to_string())
+            .unwrap_or_default();
+
         format!(
-            "{IMAGE_SHIP}{infinity}{comp}{depth}{edge}{histo}{invert}{noise}{rotate}{jpeg}{gamma}{proto}"
+            "{IMAGE_SHIP}{infinity}{comp}{depth}{edge}{histo}{invert}{noise}{rotate}{jpeg}{gamma}{proto}{pixel}"
         )
     }
 }
@@ -369,6 +408,7 @@ impl TryFrom<&str> for ImageShip {
         let jpeg_image_quality = JpegImageQuality::try_from(rem).ok();
         let gamma_correction = GammaCorrection::try_from(rem).ok();
         let protocol = Protocol::try_from(rem).ok();
+        let pixel_ship = PixelShip::try_from(rem).ok();
 
         Ok(Self {
             infinity_filter,
@@ -382,6 +422,7 @@ impl TryFrom<&str> for ImageShip {
             jpeg_image_quality,
             gamma_correction,
             protocol,
+            pixel_ship,
         })
     }
 }
@@ -416,9 +457,10 @@ mod tests {
         let exp_jpeg_image_quality = JpegImageQuality::new();
         let exp_gamma_correction = GammaCorrection::new();
         let exp_protocol = Protocol::new();
+        let exp_pixel_ship = PixelShip::new();
 
         [
-            "", "0A", "0C", "8D", "0H", "1ix", "0if", "0ir", "50J", "0K", "0P",
+            "", "0A", "0C", "8D", "0H", "1ix", "0if", "0ir", "50J", "0K", "0P", "1S",
         ]
         .into_iter()
         .map(|s| format!("{IMAGE_SHIP}{s}"))
@@ -434,6 +476,7 @@ mod tests {
             ImageShip::new().with_jpeg_image_quality(exp_jpeg_image_quality),
             ImageShip::new().with_gamma_correction(exp_gamma_correction),
             ImageShip::new().with_protocol(exp_protocol),
+            ImageShip::new().with_pixel_ship(exp_pixel_ship),
         ])
         .for_each(|(img_str, exp_img_ship)| {
             assert_eq!(ImageShip::try_from(img_str.as_str()), Ok(exp_img_ship));
@@ -452,5 +495,6 @@ mod tests {
         test_image_ship_field!(img, jpeg_image_quality, exp_jpeg_image_quality);
         test_image_ship_field!(img, gamma_correction, exp_gamma_correction);
         test_image_ship_field!(img, protocol, exp_protocol);
+        test_image_ship_field!(img, pixel_ship, exp_pixel_ship);
     }
 }
