@@ -1,9 +1,6 @@
 //! Types and algorithms related to `Image Snap` configuration.
 
-use alloc::string::{String, ToString};
-
-use crate::result::{Error, Result};
-use crate::modifier_field;
+use crate::{modifier_command, modifier_field};
 
 mod beeper;
 mod delta_for_acceptance;
@@ -27,21 +24,20 @@ pub use target_white_value::*;
 pub use update_tries::*;
 pub use wait_for_trigger::*;
 
-const IMAGE_SNAP: &str = "IMGSNP";
-
-/// Configure all barcode `Image Snap` encodings.
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub struct ImageSnap {
-    imaging_style: Option<ImagingStyle>,
-    beeper: Option<Beeper>,
-    wait_for_trigger: Option<WaitForTrigger>,
-    led: Option<LED>,
-    exposure: Option<Exposure>,
-    gain: Option<Gain>,
-    target_white_value: Option<TargetWhiteValue>,
-    delta_for_acceptance: Option<DeltaForAcceptance>,
-    update_tries: Option<UpdateTries>,
-    target_set_point: Option<TargetSetPoint>,
+modifier_command! {
+    /// Configure all barcode `Image Snap` encodings.
+    ImageSnap: "IMGSNP" {
+        imaging_style: ImagingStyle,
+        beeper: Beeper,
+        wait_for_trigger: WaitForTrigger,
+        led: LED,
+        exposure: Exposure,
+        gain: Gain,
+        target_white_value: TargetWhiteValue,
+        delta_for_acceptance: DeltaForAcceptance,
+        update_tries: UpdateTries,
+        target_set_point: TargetSetPoint,
+    }
 }
 
 modifier_field! {
@@ -204,116 +200,6 @@ modifier_field! {
     ],
 }
 
-impl ImageSnap {
-    /// Creates a new [ImageSnap].
-    pub const fn new() -> Self {
-        Self {
-            imaging_style: None,
-            beeper: None,
-            wait_for_trigger: None,
-            led: None,
-            exposure: None,
-            gain: None,
-            target_white_value: None,
-            delta_for_acceptance: None,
-            update_tries: None,
-            target_set_point: None,
-        }
-    }
-
-    /// Gets the ASCII serial command code for [ImageSnap].
-    pub fn command(&self) -> String {
-        let imaging = self
-            .imaging_style
-            .map(|v| v.command().to_string())
-            .unwrap_or_default();
-
-        let beeper = self
-            .beeper
-            .map(|v| v.command().to_string())
-            .unwrap_or_default();
-
-        let wait_for_trigger = self
-            .wait_for_trigger
-            .map(|v| v.command().to_string())
-            .unwrap_or_default();
-
-        let led = self
-            .led
-            .map(|v| v.command().to_string())
-            .unwrap_or_default();
-
-        let exposure = self
-            .exposure
-            .map(|v| v.command().to_string())
-            .unwrap_or_default();
-
-        let gain = self
-            .gain
-            .map(|v| v.command().to_string())
-            .unwrap_or_default();
-
-        let twv = self
-            .target_white_value
-            .map(|v| v.command().to_string())
-            .unwrap_or_default();
-
-        let delta = self
-            .delta_for_acceptance
-            .map(|v| v.command().to_string())
-            .unwrap_or_default();
-
-        let update = self
-            .update_tries
-            .map(|v| v.command().to_string())
-            .unwrap_or_default();
-
-        let tsp = self
-            .target_set_point
-            .map(|v| v.command().to_string())
-            .unwrap_or_default();
-
-        format!("{IMAGE_SNAP}{imaging}{beeper}{wait_for_trigger}{led}{exposure}{gain}{twv}{delta}{update}{tsp}")
-    }
-}
-
-impl Default for ImageSnap {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-impl TryFrom<&str> for ImageSnap {
-    type Error = Error;
-
-    fn try_from(val: &str) -> Result<Self> {
-        let rem = val.strip_prefix(IMAGE_SNAP).ok_or(Error::InvalidVariant)?;
-        let imaging_style = ImagingStyle::try_from(rem).ok();
-        let beeper = Beeper::try_from(rem).ok();
-        let wait_for_trigger = WaitForTrigger::try_from(rem).ok();
-        let led = LED::try_from(rem).ok();
-        let exposure = Exposure::try_from(rem).ok();
-        let gain = Gain::try_from(rem).ok();
-        let target_white_value = TargetWhiteValue::try_from(rem).ok();
-        let delta_for_acceptance = DeltaForAcceptance::try_from(rem).ok();
-        let update_tries = UpdateTries::try_from(rem).ok();
-        let target_set_point = TargetSetPoint::try_from(rem).ok();
-
-        Ok(Self {
-            imaging_style,
-            beeper,
-            wait_for_trigger,
-            led,
-            exposure,
-            gain,
-            target_white_value,
-            delta_for_acceptance,
-            update_tries,
-            target_set_point,
-        })
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -344,6 +230,7 @@ mod tests {
         let exp_delta_for_acceptance = DeltaForAcceptance::new();
         let exp_update_tries = UpdateTries::new();
         let exp_target_set_point = TargetSetPoint::new();
+        let prefix = ImageSnap::prefix();
 
         [
             "",
@@ -360,7 +247,7 @@ mod tests {
             "1P0B0T0L7874E1G125W25D6U50%",
         ]
         .into_iter()
-        .map(|s| format!("{IMAGE_SNAP}{s}"))
+        .map(|s| format!("{prefix}{s}"))
         .zip([
             ImageSnap::new(),
             ImageSnap::new().with_imaging_style(exp_imaging_style),
